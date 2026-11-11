@@ -45,6 +45,10 @@ video{display:block;width:100%;aspect-ratio:9/16;max-height:78dvh;background:#00
 .btn.wa{background:#25D366;color:#06210f}
 .btn.copy{background:transparent;color:var(--text);border:1.5px solid var(--line)}
 .resp{margin-top:14px}
+.candado{margin-top:14px;padding:16px;border-radius:14px;border:1.5px dashed var(--line);text-align:center;background:rgba(255,215,0,.04)}
+.candado b{display:block;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.7rem;letter-spacing:.06em;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.candado .cuando{display:block;font-weight:800;margin-top:2px}
+.candado .faltan{display:block;color:var(--mute);font-size:.9rem;margin-top:4px}
 .resp summary{cursor:pointer;font-weight:800;color:var(--gold);padding:10px 0;list-style:none}
 .resp summary::-webkit-details-marker{display:none}
 .resp summary::before{content:"▸ ";}
@@ -89,12 +93,15 @@ footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;lett
 /* ── THE CHALLENGES ──────────────────────────────────────────────────
    One line per challenge. "publicado" puts it on the page; "respuesta"
    shows its answer video. The newest published one is the challenge of
-   the week; the rest show below it. To release a challenge or its
-   answer, change false to true here (and nothing else). */
+   the week; the rest wait in the strip. To release a challenge or its
+   answer, change false to true here (and nothing else).
+   "respuesta" can also be a date and time in Puerto Rico, such as
+   '2026-11-13T19:00:00-04:00': until then the page shows when the answer
+   opens, with a countdown, and it opens by itself at that minute. */
 var RETOS = [
   { id: 'sigue-el-balon', titulo: '¿Puedes seguir el balón?',
     como: 'Sigue el balón marcado en rojo mientras cambian de lugar. Al final: ¿en el 1, el 2 o el 3?',
-    publicado: true, respuesta: true },
+    publicado: true, respuesta: '2026-11-13T19:00:00-04:00' },
   { id: 'quien-tiene-el-balon', titulo: '¿Quién tiene el balón?',
     como: 'Sigue el balón que empieza con el 7. Entra otro balón igual y los dos se pasan a la vez. Se va la luz: ¿quién tiene el tuyo? Comenta el número.',
     publicado: false, respuesta: false },
@@ -123,8 +130,10 @@ var RETOS = [
         '<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent('🏀 ' + r.titulo + ' ¿Lo puedes resolver?\n' + enlace(r)) + '">WhatsApp</a>' +
         '<button class="btn copy" type="button" data-u="' + esc(enlace(r)) + '">Copiar enlace</button>' +
       '</div>' +
-      (r.respuesta ? '<details class="resp"><summary>Ver la respuesta</summary>' +
-        vid(r.id + '-respuesta', 'none') + '</details>' : '') +
+      (abierta(r) ? '<details class="resp"><summary>Ver la respuesta</summary>' +
+        vid(r.id + '-respuesta', 'none') + '</details>' :
+       cuando(r) ? '<div class="candado"><b>🔒 La respuesta sale</b><span class="cuando">' + fecha(cuando(r)) + '</span>' +
+        '<span class="faltan" data-t="' + cuando(r) + '"></span></div>' : '') +
     '</section>';
   }
   function tira(actual){
@@ -132,14 +141,34 @@ var RETOS = [
     return '<div class="tira"><h3>Todos los retos</h3><div class="fila">' +
       vivos.map(function(r, k){
         return '<button class="mini' + (r === actual ? ' sel' : '') + '" type="button" data-id="' + r.id + '">' +
-          '<img loading="lazy" alt="" src="portadas/' + r.id + '.jpg">' + (k === 0 ? '<i>NUEVO</i>' : r.respuesta ? '<i>✓ RESPUESTA</i>' : '') +
+          '<img loading="lazy" alt="" src="portadas/' + r.id + '.jpg">' + (k === 0 ? '<i>NUEVO</i>' : abierta(r) ? '<i>✓ RESPUESTA</i>' : '') +
           '<span>' + esc(r.titulo) + '</span></button>';
       }).join('') + '</div></div>';
   }
+  /* the answer: true, false, or the date and time it opens */
+  function cuando(r){ return typeof r.respuesta === 'string' ? Date.parse(r.respuesta) || 0 : 0 }
+  function abierta(r){ return r.respuesta === true || (cuando(r) > 0 && Date.now() >= cuando(r)) }
+  function fecha(t){
+    var o = { timeZone: 'America/Puerto_Rico' };
+    try {
+      var d = new Date(t).toLocaleDateString('es', Object.assign({ weekday: 'long', day: 'numeric', month: 'long' }, o));
+      var h = new Date(t).toLocaleTimeString('es', Object.assign({ hour: 'numeric', minute: '2-digit', hour12: true }, o));
+      return d.charAt(0).toUpperCase() + d.slice(1) + ' · ' + h.replace(/\s?a\.?\s?m\.?/i, ' a.m.').replace(/\s?p\.?\s?m\.?/i, ' p.m.');
+    } catch (e) { return new Date(t).toString() }
+  }
+  function reloj(){
+    var f = main.querySelector('.faltan'); if (!f) return;
+    var ms = +f.getAttribute('data-t') - Date.now();
+    if (ms <= 0) { mostrar(actual, false); return }                  /* it opens by itself */
+    var m = Math.ceil(ms / 60000), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60;
+    f.textContent = 'Faltan ' + (d ? d + ' d ' : '') + (d || h ? h + ' h ' : '') + mi + ' min';
+  }
+  setInterval(reloj, 15000);
+  var actual = null;
   function buscar(id){ for (var i = 0; i < vivos.length; i++) if (vivos[i].id === id) return vivos[i]; return null }
   function mostrar(r, mover){
     main.querySelectorAll('video').forEach(function(v){ v.pause() });
-    main.innerHTML = ficha(r) + tira(r);
+    actual = r; main.innerHTML = ficha(r) + tira(r); reloj();
     var sel = main.querySelector('.mini.sel'); if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     if (mover) main.querySelector('.reto').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
