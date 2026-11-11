@@ -55,6 +55,16 @@ video{display:block;width:100%;aspect-ratio:9/16;max-height:78dvh;background:#00
 .gym span{font-weight:600}
 footer{text-align:center;color:var(--mute);font-size:.85rem;margin-top:22px}
 footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;letter-spacing:.3em;color:#4a5058}
+.tira{margin:22px 0 0}
+.tira h3{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.5rem;letter-spacing:.06em;margin:0 0 8px;color:var(--mute)}
+/* past challenges: one row you swipe sideways, so the page never grows */
+.fila{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.fila::-webkit-scrollbar{display:none}
+.mini{flex:0 0 31%;scroll-snap-align:start;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:0;overflow:hidden;cursor:pointer;color:var(--text);font:inherit;text-align:left;position:relative}
+.mini img{display:block;width:100%;aspect-ratio:9/16;object-fit:cover}
+.mini span{display:block;padding:6px 8px 8px;font-size:.74rem;font-weight:700;line-height:1.2;min-height:2.6em}
+.mini i{position:absolute;top:6px;right:6px;font-style:normal;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:999px;background:var(--grad);color:#1a0f0f}
+.mini.sel{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,215,0,.35)}
 .vacio{text-align:center;color:var(--mute);padding:40px 0}
 </style>
 </head>
@@ -95,7 +105,9 @@ var RETOS = [
   function vid(n, pre){ return '<div class="vid"><video playsinline preload="' + pre + '" poster="portadas/' + n + '.jpg" src="' + n + '.mp4"></video>' +
     '<button class="play" type="button" aria-label="Play"><span></span></button></div>' }
   function enlace(r){ return location.origin + location.pathname + '#' + r.id }
-  main.innerHTML = vivos.map(function(r, k){
+  /* One challenge on screen at a time; the others wait in a sideways strip. */
+  function ficha(r){
+    var k = vivos.indexOf(r);
     return '<section class="reto" id="' + r.id + '">' +
       '<span class="kick' + (k ? ' old' : '') + '">' + (k ? 'Reto anterior' : 'Reto de la semana') + '</span>' +
       '<h2>' + esc(r.titulo) + '</h2>' +
@@ -108,9 +120,29 @@ var RETOS = [
       (r.respuesta ? '<details class="resp"><summary>Ver la respuesta</summary>' +
         vid(r.id + '-respuesta', 'none') + '</details>' : '') +
     '</section>';
-  }).join('');
+  }
+  function tira(actual){
+    if (vivos.length < 2) return '';
+    return '<div class="tira"><h3>Todos los retos</h3><div class="fila">' +
+      vivos.map(function(r, k){
+        return '<button class="mini' + (r === actual ? ' sel' : '') + '" type="button" data-id="' + r.id + '">' +
+          '<img loading="lazy" alt="" src="portadas/' + r.id + '.jpg">' + (k === 0 ? '<i>NUEVO</i>' : r.respuesta ? '<i>✓ RESPUESTA</i>' : '') +
+          '<span>' + esc(r.titulo) + '</span></button>';
+      }).join('') + '</div></div>';
+  }
+  function buscar(id){ for (var i = 0; i < vivos.length; i++) if (vivos[i].id === id) return vivos[i]; return null }
+  function mostrar(r, mover){
+    main.querySelectorAll('video').forEach(function(v){ v.pause() });
+    main.innerHTML = ficha(r) + tira(r);
+    var sel = main.querySelector('.mini.sel'); if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    if (mover) main.querySelector('.reto').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  mostrar(buscar(location.hash.slice(1)) || vivos[0], !!buscar(location.hash.slice(1)));
+  window.addEventListener('hashchange', function(){ var r = buscar(location.hash.slice(1)); if (r) mostrar(r, true) });
   main.addEventListener('click', function(e){
     /* tap the button to play from where it stopped; tap the video to pause */
+    var m = e.target.closest('.mini');
+    if (m) { var r = buscar(m.getAttribute('data-id')); history.replaceState(null, '', r === vivos[0] ? location.pathname : '#' + r.id); mostrar(r, true); return }
     var w = e.target.closest('.vid');
     if (w) { var v = w.querySelector('video'); if (v.paused) { if (v.ended) v.currentTime = 0; v.play() } else v.pause(); return }
     var b = e.target.closest('.copy'); if (!b) return;
@@ -122,7 +154,6 @@ var RETOS = [
   /* only one video plays at a time */
   main.addEventListener('play', function(e){ e.target.parentNode.classList.add('on'); main.querySelectorAll('video').forEach(function(v){ if (v !== e.target) v.pause() }) }, true);
   main.addEventListener('pause', function(e){ e.target.parentNode.classList.remove('on') }, true);
-  if (location.hash) { var el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView() }
 })();
 </script>
 </body>
