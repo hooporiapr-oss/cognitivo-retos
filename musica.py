@@ -52,15 +52,20 @@ pad = sum(tone(f, end_music) for f in [220, 261.6, 329.6]) / 3
 pad *= np.minimum(1, np.arange(len(pad)) / SR / 2) * 0.10
 add(pad, 0)
 # ticking clock that speeds up with the swaps
-for a, b in I['swap_times']:
+for a, b in I.get('swap_times', []):
     add(whoosh(b - a), a, 0.45, rng.uniform(-0.5, 0.5))
     tk = tone(2200, 0.03) * np.exp(-np.arange(int(0.03 * SR)) / SR * 120); add(tk, a, 0.25)
+# The Fortress: each target sounds its own note when it lights up
+for at, f in I.get('flashes', []):
+    m = int(0.5 * SR); tt = np.arange(m) / SR
+    bell = (np.sin(2 * np.pi * f * tt) + 0.4 * np.sin(2 * np.pi * 2 * f * tt) + 0.15 * np.sin(2 * np.pi * 3 * f * tt)) * np.exp(-tt * 6)
+    add(bell, at, 0.55)
 # target sting
 st = sum(tone(f, 0.9) for f in [659, 880, 1318]) / 3 * np.exp(-np.arange(int(0.9 * SR)) / SR * 4)
 add(st, I['t_show'], 0.45)
 # stop + question: a riser then a drum roll
 add(kick() * 1.4, I['t_stop'], 1.0)
-roll_t = I['t_ask']; dt = 0.11
+roll_t = I['t_ask'] if I.get('roll', True) else 1e9; dt = 0.11
 ROLL_END = I.get('t_reveal', I['t_brand'])
 while roll_t < ROLL_END - 0.1:
     add(snare(), roll_t, 0.12 + 0.35 * (roll_t - I['t_ask']) / (ROLL_END - I['t_ask']), rng.uniform(-0.2, 0.2))
