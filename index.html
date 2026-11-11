@@ -29,6 +29,13 @@ h1{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(2rem,9vw,
 .reto h2{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.6rem;letter-spacing:.02em;margin:10px 0 2px;line-height:1.1}
 .reto p{margin:0 0 12px;color:var(--mute)}
 video{display:block;width:100%;aspect-ratio:9/16;max-height:78dvh;background:#000;border-radius:12px;object-fit:contain}
+/* Our own play button: the phone's built-in controls dim the picture for the
+   first seconds, exactly when the red ball is shown. */
+.vid{position:relative}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.vid .play span{width:84px;height:84px;border-radius:50%;background:var(--orange);box-shadow:0 6px 24px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.vid .play span::after{content:"";margin-left:8px;border-style:solid;border-width:18px 0 18px 30px;border-color:transparent transparent transparent #1a0d00}
+.vid.on .play{display:none}
 .como{margin:12px 0 0;padding:12px 14px;border-left:4px solid var(--orange);background:rgba(255,122,24,.08);border-radius:0 10px 10px 0;font-size:.95rem}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .btn{display:block;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.95rem;padding:13px 10px;border-radius:12px;border:none;cursor:pointer}
@@ -80,22 +87,27 @@ var RETOS = [
   var main = document.getElementById('retos');
   if (!vivos.length) { main.innerHTML = '<div class="vacio">Pronto: el primer reto.</div>'; return }
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c] }) }
+  function vid(n, pre){ return '<div class="vid"><video playsinline preload="' + pre + '" poster="portadas/' + n + '.jpg" src="' + n + '.mp4"></video>' +
+    '<button class="play" type="button" aria-label="Play"><span></span></button></div>' }
   function enlace(r){ return location.origin + location.pathname + '#' + r.id }
   main.innerHTML = vivos.map(function(r, k){
     return '<section class="reto" id="' + r.id + '">' +
       '<span class="kick' + (k ? ' old' : '') + '">' + (k ? 'Reto anterior' : 'Reto de la semana') + '</span>' +
       '<h2>' + esc(r.titulo) + '</h2>' +
-      '<video controls playsinline preload="metadata" poster="portadas/' + r.id + '.jpg" src="' + r.id + '.mp4"></video>' +
+      vid(r.id, 'metadata') +
       '<div class="como">' + esc(r.como) + '</div>' +
       '<div class="btns">' +
         '<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent('🏀 ' + r.titulo + ' ¿Lo puedes resolver?\n' + enlace(r)) + '">WhatsApp</a>' +
         '<button class="btn copy" type="button" data-u="' + esc(enlace(r)) + '">Copiar enlace</button>' +
       '</div>' +
       (r.respuesta ? '<details class="resp"><summary>Ver la respuesta</summary>' +
-        '<video controls playsinline preload="none" poster="portadas/' + r.id + '-respuesta.jpg" src="' + r.id + '-respuesta.mp4"></video></details>' : '') +
+        vid(r.id + '-respuesta', 'none') + '</details>' : '') +
     '</section>';
   }).join('');
   main.addEventListener('click', function(e){
+    /* tap the button to play from where it stopped; tap the video to pause */
+    var w = e.target.closest('.vid');
+    if (w) { var v = w.querySelector('video'); if (v.paused) { if (v.ended) v.currentTime = 0; v.play() } else v.pause(); return }
     var b = e.target.closest('.copy'); if (!b) return;
     var u = b.getAttribute('data-u'), t = b.textContent;
     function ok(){ b.textContent = '¡Copiado!'; setTimeout(function(){ b.textContent = t }, 1800) }
@@ -103,7 +115,8 @@ var RETOS = [
     function viejo(){ try { var x = document.createElement('textarea'); x.value = u; document.body.appendChild(x); x.select(); document.execCommand('copy'); x.remove(); ok() } catch(err){} }
   });
   /* only one video plays at a time */
-  main.addEventListener('play', function(e){ main.querySelectorAll('video').forEach(function(v){ if (v !== e.target) v.pause() }) }, true);
+  main.addEventListener('play', function(e){ e.target.parentNode.classList.add('on'); main.querySelectorAll('video').forEach(function(v){ if (v !== e.target) v.pause() }) }, true);
+  main.addEventListener('pause', function(e){ e.target.parentNode.classList.remove('on') }, true);
   if (location.hash) { var el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView() }
 })();
 </script>
