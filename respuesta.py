@@ -20,16 +20,10 @@ ANS = G.final_spot()             # 0-based spot index
 
 def frame(tt):
     img = G.BG.copy().convert('RGBA'); d = ImageDraw.Draw(img)
-    # title: LA RESPUESTA / ¿LO SEGUISTE?
-    lay = Image.new('RGBA', (G.W, G.H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
-    a = G.ease(tt / 0.3); f = G.anton(118); y0 = 205 - 40 * (1 - a)
-    G.text_c(ld, (540, y0), '¿LO', f, G.WHITE) if False else None
-    w1 = ld.textlength('¿LO ', font=f); w2 = ld.textlength('SEGUISTE?', font=f); x = 540 - (w1 + w2) / 2
-    ld.text((x, y0), '¿LO ', font=f, fill=G.WHITE, anchor='lm'); ld.text((x + w1, y0), 'SEGUISTE?', font=f, fill=G.ORANGE, anchor='lm')
-    G.text_c(ld, (540, y0 + 128), 'MÍRALO OTRA VEZ', G.anton(84), (225, 220, 255))
-    lay.putalpha(lay.getchannel('A').point(lambda v: int(v * a))); img.alpha_composite(lay)
+    # wordmark, then the title: ¿LO SEGUISTE? / MÍRALO OTRA VEZ
     if tt < T_BRAND:
-        G.pill(img, 540, 82, 'LA RESPUESTA', G.outfit(34, 800), (255, 70, 70), G.WHITE)
+        G.wordmark(img)
+    G.title(img, G.ease(tt / 0.3), '¿LO SEGUISTE?', 'MÍRALO ', 'OTRA VEZ')
     g = g_of(tt) if tt < T_STOP else G.T_STOP
     pos, moving = G.positions_at(g)
     # the trail of the ball to follow
@@ -49,7 +43,7 @@ def frame(tt):
     if tt < T0:
         G.bottom(img, 'Este es el balón', G.ease((tt - 0.2) / 0.3))
     elif tt < T_STOP:
-        G.bottom(img, 'En cámara lenta...', 1.0, G.GOLD)
+        G.bottom(img, 'En cámara lenta...', 1.0, G.CG_GOLD)
     # the answer
     if tt >= T_ROLL:
         u = G.ease((tt - T_ROLL) / 0.3)
@@ -59,25 +53,20 @@ def frame(tt):
             win = (i == ANS and tt >= T_REVEAL)
             sc = G.pop((tt - T_REVEAL) / 0.4) if win else 1
             rad = 46 * sc
-            ld.ellipse((cx - rad, cy - rad, cx + rad, cy + rad), fill=(255, 70, 70, 255) if win else (255, 255, 255, 240))
-            G.text_c(ld, (cx, cy + 3), str(i + 1), G.anton(int(64 * sc)), G.WHITE if win else (20, 16, 40))
+            ld.ellipse((cx - rad, cy - rad, cx + rad, cy + rad), fill=(255, 70, 70, 255) if win else G.CG_GOLD + (245,))
+            G.text_c(ld, (cx, cy + 4), str(i + 1), G.bebas(int(80 * sc)), G.WHITE if win else (26, 15, 15))
             lay.putalpha(lay.getchannel('A').point(lambda v: int(v * u))); img.alpha_composite(lay)
     if tt >= T_REVEAL and tt < T_BRAND:
         u = G.ease((tt - T_REVEAL) / 0.3); sc = G.pop((tt - T_REVEAL) / 0.4)
         lay = Image.new('RGBA', (G.W, G.H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
-        ld.rounded_rectangle((90, 1700, 990, 1890), radius=40, fill=(10, 8, 26, 235), outline=(255, 70, 70, 255), width=4)
-        G.text_c(ld, (540, 1760), '¡ERA EL ' + str(ANS + 1) + '!', G.anton(int(96 * sc)), G.WHITE)
-        G.text_c(ld, (540, 1846), '¿Acertaste? Cuéntanos', G.outfit(48), G.GOLD)
+        ld.rounded_rectangle((90, 1700, 990, 1890), radius=26, fill=G.CG_DARK + (238,), outline=(255, 70, 70, 255), width=4)
+        G.text_c(ld, (540, 1762), '¡ERA EL ' + str(ANS + 1) + '!', G.bebas(int(118 * sc)), G.WHITE)
+        G.text_c(ld, (540, 1850), '¿Acertaste? Cuéntanos', G.outfit(48), G.CG_GOLD)
         lay.putalpha(lay.getchannel('A').point(lambda v: int(v * u))); img.alpha_composite(lay)
     elif T_ROLL <= tt < T_REVEAL:
         G.bottom(img, 'La respuesta es...', G.ease((tt - T_ROLL) / 0.25), G.WHITE, 66)
     if tt >= T_BRAND:
-        u = G.ease((tt - T_BRAND) / 0.4)
-        lay = Image.new('RGBA', (G.W, G.H), (8, 8, 20, int(215 * u))); ld = ImageDraw.Draw(lay); a = int(255 * u)
-        G.text_c(ld, (540, 860), 'COGNITIVO GYM', G.anton(130), G.ORANGE + (a,))
-        G.text_c(ld, (540, 990), 'Entrena tu mente como entrenas tu juego', G.outfit(46, 600), (230, 230, 245, a))
-        G.text_c(ld, (540, 1110), 'Un reto nuevo cada semana', G.outfit(46, 700), G.GOLD + (a,))
-        img.alpha_composite(lay)
+        G.endcard(img, G.ease((tt - T_BRAND) / 0.4), 'Un reto nuevo cada semana')
     return img.convert('RGB')
 
 if __name__ == '__main__':

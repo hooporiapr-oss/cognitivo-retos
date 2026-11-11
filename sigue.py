@@ -12,12 +12,24 @@ ANTON = os.path.join(HERE, 'Anton.woff')
 OUTF = os.path.join(HERE, 'Outfit-{}.woff')
 def anton(n): return ImageFont.truetype(ANTON, n)
 def outfit(n, w=700): return ImageFont.truetype(OUTF.format(w), n)
+BEBAS = os.path.join(HERE, 'BebasNeue.woff')
+def bebas(n): return ImageFont.truetype(BEBAS, n)
 
 ORANGE = (255, 122, 24); NEON = (150, 110, 255); CYAN = (90, 230, 255); WHITE = (255, 255, 255)
 GREEN = (120, 230, 120); RED = (255, 70, 70); GOLD = (255, 205, 60)
+# Cognitivo Gym's own colours (the same as the gym's site)
+CG_GOLD = (255, 215, 0); CG_ORANGE = (255, 107, 53); CG_DARK = (10, 10, 15); CG_MUTED = (136, 146, 160)
 
 # ── the three spots: above the head, left hand, right hand ──
-SPOTS = [(540, 470), (318, 1205), (762, 1205)]
+# ── a regulation (FIBA) half court, 80 px per metre, baseline at the bottom ──
+PX = 80.0
+BASE_Y = 1800                                   # baseline
+MID_Y = BASE_Y - 14.0 * PX                      # half-court line (14 m)
+HOOP = (540, BASE_Y - 1.575 * PX)               # centre of the rim
+FT_Y = BASE_Y - 5.8 * PX                        # free-throw line
+LANE = 4.9 * PX / 2                             # half the lane's width
+# the three spots: the centre circle and the two elbows
+SPOTS = [(540, int(MID_Y)), (int(540 - LANE), int(FT_Y)), (int(540 + LANE), int(FT_Y))]
 CENTROID = (540, 960)
 
 # ── timeline ──
@@ -70,51 +82,116 @@ def arc(p, q, u, side):
     y = (1 - u) ** 2 * p[1] + 2 * (1 - u) * u * cy + u * u * q[1]
     return (x, y)
 
-# ── static background: night gradient, faint stars, the neon player ──
+# ── static background: a perfect Cognitivo Gym court, seen from above ──
 def background():
-    g = np.zeros((H, W, 3), np.float32)
     yy = np.linspace(0, 1, H)[:, None]; xx = np.linspace(-1, 1, W)[None, :]
-    top = np.array([16, 14, 40]); bot = np.array([8, 10, 24])
-    g[:] = (top * (1 - yy) + bot * yy)[..., None].transpose(0, 2, 1) if False else 0
-    for c in range(3):
-        g[..., c] = top[c] * (1 - yy) + bot[c] * yy
-    glow = np.exp(-((xx) ** 2 * 2.2 + ((yy - 0.48) * 2.4) ** 2))
-    g += glow[..., None] * np.array([38, 26, 90])
-    img = Image.fromarray(np.clip(g, 0, 255).astype(np.uint8))
-    d = ImageDraw.Draw(img)
-    rnd = random.Random(5)
-    for _ in range(140):
-        x, y = rnd.randrange(W), rnd.randrange(H); r = rnd.choice([1, 1, 1, 2])
-        a = rnd.randrange(60, 170); d.ellipse((x - r, y - r, x + r, y + r), fill=(a, a, a + 20))
-    # faint half court at the feet
-    court = Image.new('L', (W, H), 0); cd = ImageDraw.Draw(court)
-    cd.arc((140, 1560, 940, 2160), 180, 360, fill=70, width=4)
-    cd.line((40, 1700, 1040, 1700), fill=40, width=3)
-    img.paste((120, 100, 220), (0, 0), court)
-    # the player
-    m = Image.new('L', (W, H), 0); md = ImageDraw.Draw(m)
-    md.ellipse((540 - 78, 560, 540 + 78, 716), fill=255)                 # head
-    md.rectangle((515, 700, 565, 760), fill=255)                         # neck
-    md.rounded_rectangle((392, 752, 688, 1200), radius=70, fill=255)     # body
-    def limb(p, q, w):
-        dx, dy = q[0] - p[0], q[1] - p[1]; L = math.hypot(dx, dy); nx, ny = -dy / L * w / 2, dx / L * w / 2
-        md.polygon([(p[0] + nx, p[1] + ny), (q[0] + nx, q[1] + ny), (q[0] - nx, q[1] - ny), (p[0] - nx, p[1] - ny)], fill=255)
-        md.ellipse((q[0] - w / 2, q[1] - w / 2, q[0] + w / 2, q[1] + w / 2), fill=255)
-    limb((420, 800), (330, 1150), 74); limb((660, 800), (750, 1150), 74)   # arms
-    md.rectangle((410, 1150, 528, 1640), fill=255); md.rectangle((552, 1150, 670, 1640), fill=255)  # legs
-    m = m.filter(ImageFilter.GaussianBlur(2))
-    m = m.point(lambda v: 255 if v > 128 else 0)
-    edge = m.filter(ImageFilter.FIND_EDGES).filter(ImageFilter.MaxFilter(5))
-    fill = Image.new('RGB', (W, H), (14, 12, 34))
-    img.paste(fill, (0, 0), m)
-    # jersey number, faint
-    jn = Image.new('L', (W, H), 0); ImageDraw.Draw(jn).text((540, 960), '23', font=anton(190), fill=34, anchor='mm')
-    img.paste((140, 120, 255), (0, 0), jn)
-    gl = Image.new('RGB', (W, H), 0); gl.paste(NEON, (0, 0), edge)
-    big = gl.filter(ImageFilter.GaussianBlur(18))
-    img = Image.fromarray(np.clip(np.asarray(img, np.int16) + np.asarray(big, np.int16) * 1.6, 0, 255).astype(np.uint8))
-    img.paste((200, 180, 255), (0, 0), edge.filter(ImageFilter.MinFilter(3)))
-    return img
+    g = np.zeros((H, W, 3), np.float32) + np.array(CG_DARK, np.float32)
+    # glossy dark hardwood: boards along the length, with staggered joints
+    rnd = random.Random(7); bw = 40
+    for i in range(W // bw + 1):
+        x0 = i * bw; tone = rnd.uniform(0.85, 1.15)
+        g[:, x0:x0 + bw] += np.array([20, 13, 7], np.float32) * tone
+        g[:, x0:x0 + 2] *= 0.55                                           # seam between boards
+        y = rnd.randrange(0, 400)
+        while y < H: g[y:y + 2, x0:x0 + bw] *= 0.6; y += rnd.randrange(380, 620)
+    # spotlight on the court and a soft sheen down the middle
+    spot = np.exp(-((xx) ** 2 * 1.3 + ((yy - 0.6) * 1.7) ** 2))
+    g *= (0.55 + 0.9 * spot)[..., None]
+    g += (np.exp(-(xx * 3.2) ** 2) * np.exp(-((yy - 0.55) * 2.5) ** 2) * 26)[..., None] * np.array([1, 0.8, 0.5])
+    img = Image.fromarray(np.clip(g, 0, 255).astype(np.uint8)).convert('RGBA')
+    gw = (CG_GOLD[0], CG_GOLD[1], CG_GOLD[2])
+    def grad_fill(mask, alpha):
+        u = np.clip(yy * 1.0, 0, 1)[..., None]
+        col = np.array(CG_ORANGE, np.float32) * u + np.array(CG_GOLD, np.float32) * (1 - u)
+        f = Image.fromarray(np.repeat(col, W, 1).astype(np.uint8))
+        img.alpha_composite(Image.merge('RGBA', (*f.split(), mask.point(lambda v: int(v * alpha)))))
+    # painted areas: the lane and the centre circle, in the gym's gold-to-orange
+    pm = Image.new('L', (W, H), 0); pd = ImageDraw.Draw(pm)
+    pd.rectangle((540 - LANE, FT_Y, 540 + LANE, BASE_Y), fill=255)
+    pd.ellipse((540 - 1.8 * PX, MID_Y - 1.8 * PX, 540 + 1.8 * PX, MID_Y + 1.8 * PX), fill=255)
+    grad_fill(pm, 0.30)
+    # the lines, exactly where FIBA puts them
+    m = Image.new('L', (W, H), 0); d = ImageDraw.Draw(m); lw = 8
+    d.line((0, MID_Y, W, MID_Y), fill=255, width=lw)                                        # half-court line
+    d.ellipse((540 - 1.8 * PX, MID_Y - 1.8 * PX, 540 + 1.8 * PX, MID_Y + 1.8 * PX), outline=255, width=lw)
+    d.line((0, BASE_Y, W, BASE_Y), fill=255, width=lw)                                      # baseline
+    d.rectangle((540 - LANE, FT_Y, 540 + LANE, BASE_Y), outline=255, width=lw)              # the lane
+    d.ellipse((540 - 1.8 * PX, FT_Y - 1.8 * PX, 540 + 1.8 * PX, FT_Y + 1.8 * PX), outline=255, width=lw)  # free-throw circle
+    for k in range(1, 4):                                                                   # lane hash marks
+        for sx in (-1, 1):
+            y = BASE_Y - (1.75 + k * 0.85) * PX; x = 540 + sx * LANE
+            d.line((x, y, x + sx * 0.1 * PX * 2.2, y), fill=255, width=lw - 2)
+    r3 = 6.75 * PX; cx3 = 540 - 0.9 * PX * 0 ; side = 540 - 0.9 * PX                       # 3-pt: 6.75 m, corners 0.9 m in
+    dx = 540 - 0.9 * PX; ang = math.degrees(math.asin(min(1, (W / 2 - 0.9 * PX * 0 - 12) / r3)))
+    xc = r3 * math.sin(math.radians(ang)); yc = HOOP[1] - r3 * math.cos(math.radians(ang))
+    d.arc((HOOP[0] - r3, HOOP[1] - r3, HOOP[0] + r3, HOOP[1] + r3), 270 - ang, 270 + ang, fill=255, width=lw)
+    for sx in (-1, 1): d.line((HOOP[0] + sx * xc, yc, HOOP[0] + sx * xc, BASE_Y), fill=255, width=lw)
+    d.arc((HOOP[0] - 1.25 * PX, HOOP[1] - 1.25 * PX, HOOP[0] + 1.25 * PX, HOOP[1] + 1.25 * PX), 180, 360, fill=255, width=lw - 2)  # no-charge arc
+    lines = Image.new('RGB', (W, H), gw)
+    wide = Image.new('RGBA', (W, H), CG_ORANGE + (0,)); wide.putalpha(m.filter(ImageFilter.GaussianBlur(26)).point(lambda v: min(255, int(v * 1.6))))
+    near = Image.new('RGBA', (W, H), CG_GOLD + (0,)); near.putalpha(m.filter(ImageFilter.GaussianBlur(7)).point(lambda v: min(255, int(v * 1.5))))
+    img.alpha_composite(wide); img.alpha_composite(near)
+    core = Image.new('RGBA', (W, H), (255, 244, 190, 0)); core.putalpha(m); img.alpha_composite(core)
+    # backboard and rim, glowing orange
+    hb = Image.new('RGBA', (W, H), (0, 0, 0, 0)); hd = ImageDraw.Draw(hb)
+    hd.line((540 - 0.9 * PX, BASE_Y - 1.2 * PX, 540 + 0.9 * PX, BASE_Y - 1.2 * PX), fill=(255, 255, 255, 255), width=10)
+    hd.ellipse((HOOP[0] - 0.23 * PX, HOOP[1] - 0.23 * PX, HOOP[0] + 0.23 * PX, HOOP[1] + 0.23 * PX), outline=CG_ORANGE + (255,), width=7)
+    img.alpha_composite(hb.filter(ImageFilter.GaussianBlur(8))); img.alpha_composite(hb)
+    # centre-court logo
+    # COGNITIVO GYM painted on the floor, between the centre circle and the arc
+    cg = Image.new('RGBA', (W, H), (0, 0, 0, 0)); cd = ImageDraw.Draw(cg); f = bebas(110); t = 'COGNITIVO GYM'
+    ws = [cd.textlength(c, font=f) for c in t]; sp = 14; x = 540 - (sum(ws) + sp * (len(t) - 1)) / 2
+    for c, w in zip(t, ws): cd.text((x, (MID_Y + 1.8 * PX + HOOP[1] - r3) / 2), c, font=f, fill=(255, 225, 150, 52), anchor='lm'); x += w + sp
+    img.alpha_composite(cg)
+    # dark band behind the title so it always reads
+    top = np.clip(1 - yy / 0.24, 0, 1) ** 1.6
+    shade = Image.fromarray((np.repeat(top * 200, W, 1)).astype(np.uint8))
+    img.alpha_composite(Image.merge('RGBA', (*Image.new('RGB', (W, H), CG_DARK).split(), shade)))
+    return img.convert('RGB')
+
+def grad_text(img, xy, s, font, a=1.0, spacing=0, anchor='mm'):
+    """text filled gold to orange, left to right, like the gym's wordmark"""
+    lay = Image.new('L', (W, H), 0); d = ImageDraw.Draw(lay)
+    if spacing:
+        ws = [d.textlength(c, font=font) for c in s]; tot = sum(ws) + spacing * (len(s) - 1)
+        x = xy[0] - tot / 2
+        for c, w in zip(s, ws): d.text((x, xy[1]), c, font=font, fill=255, anchor='lm'); x += w + spacing
+    else:
+        d.text(xy, s, font=font, fill=255, anchor=anchor)
+    bb = lay.getbbox()
+    if not bb: return
+    x0, x1 = bb[0], max(bb[2], bb[0] + 1)
+    u = np.clip((np.arange(W) - x0) / (x1 - x0), 0, 1)[None, :, None]
+    col = np.array(CG_GOLD, np.float32) * (1 - u) + np.array(CG_ORANGE, np.float32) * u
+    fill = Image.fromarray(np.repeat(col, H, 0).astype(np.uint8))
+    al = lay.point(lambda v: int(v * a))
+    img.paste(fill, (0, 0), al) if img.mode == 'RGB' else img.alpha_composite(Image.merge('RGBA', (*fill.split(), al)))
+
+def wordmark(img, y=74, a=1.0):
+    """COGNITIVO GYM, spaced, gold to orange — the top of every frame"""
+    grad_text(img, (540, y), 'COGNITIVO GYM', bebas(64), a, spacing=10)
+
+def endcard(img, u, line):
+    """the closing card, laid out like the gym's own start screen"""
+    lay = Image.new('RGBA', (W, H), CG_DARK + (int(235 * u),)); img.alpha_composite(lay)
+    a = u
+    grad_text(img, (540, 770), 'COGNITIVO', bebas(190), a, spacing=16)
+    grad_text(img, (540, 930), 'GYM', bebas(190), a, spacing=16)
+    lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay); al = int(255 * a)
+    t = 'CADA PUNTO CUENTA'; f = outfit(36, 700); ws = [ld.textlength(c, font=f) for c in t]; sp = 11; x = 540 - (sum(ws) + sp * (len(t) - 1)) / 2
+    for c, w in zip(t, ws): ld.text((x, 1048), c, font=f, fill=CG_MUTED + (al,), anchor='lm'); x += w + sp
+    img.alpha_composite(lay)
+    # the gradient button: where to play
+    bt = Image.new('RGBA', (W, H), (0, 0, 0, 0)); bd = ImageDraw.Draw(bt)
+    m = Image.new('L', (W, H), 0); ImageDraw.Draw(m).rounded_rectangle((150, 1140, 930, 1280), radius=26, fill=al)
+    u2 = np.clip((np.arange(W) - 150) / 780, 0, 1)[None, :, None]
+    col = np.array(CG_GOLD, np.float32) * (1 - u2) + np.array(CG_ORANGE, np.float32) * u2
+    fill = Image.fromarray(np.repeat(col, H, 0).astype(np.uint8))
+    img.alpha_composite(Image.merge('RGBA', (*fill.split(), m)))
+    lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
+    text_c(ld, (540, 1213), 'COGNOGYM.COM', bebas(84), (26, 15, 15, al))
+    text_c(ld, (540, 1380), line, outfit(46, 700), (235, 235, 240, al))
+    img.alpha_composite(lay)
 
 # ── ball sprites ──
 def ball_sprite(r, hot=False):
@@ -166,19 +243,21 @@ def pill(img, cx, cy, s, font, bg, fg):
     d.rounded_rectangle((cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2), radius=h / 2, fill=bg)
     text_c(d, (cx, cy), s, font, fg)
 
-def title(img, a):
-    """¿PUEDES SEGUIR / EL BALÓN?  — slides down and fades in"""
+def title(img, a, l1='¿PUEDES SEGUIR', l2a='EL ', l2b='BALÓN?'):
+    """two-line title in the gym's Bebas Neue: white, then the key word in gold to orange"""
     lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
-    f = anton(118); y0 = 205 - 40 * (1 - a)
-    text_c(d, (540, y0), '¿PUEDES SEGUIR', f, WHITE)
-    # second line: "EL" white + "BALÓN?" orange
-    w1 = d.textlength('EL ', font=f); w2 = d.textlength('BALÓN?', font=f); x = 540 - (w1 + w2) / 2
-    d.text((x, y0 + 128), 'EL ', font=f, fill=WHITE, anchor='lm'); d.text((x + w1, y0 + 128), 'BALÓN?', font=f, fill=ORANGE, anchor='lm')
+    f = bebas(150); y0 = 190 - 40 * (1 - a)
+    text_c(d, (540, y0), l1, f, WHITE)
+    w1 = d.textlength(l2a, font=f); w2 = d.textlength(l2b, font=f); x = 540 - (w1 + w2) / 2
+    d.text((x, y0 + 132), l2a, font=f, fill=WHITE, anchor='lm')
     if a < 1: lay.putalpha(lay.getchannel('A').point(lambda v: int(v * a)))
     img.alpha_composite(lay)
+    grad_text(img, (x + w1, y0 + 132), l2b, f, a, anchor='lm')
 
 def bottom(img, s, a=1.0, col=WHITE, size=64, y=1810):
     lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
+    tw = d.textlength(s, font=outfit(size))
+    d.rounded_rectangle((540 - tw / 2 - 40, y - 52, 540 + tw / 2 + 40, y + 50), radius=50, fill=CG_DARK + (225,))   # so it reads over the court lines
     text_c(d, (540, y), s, outfit(size), col)
     if a < 1: lay.putalpha(lay.getchannel('A').point(lambda v: int(v * a)))
     img.alpha_composite(lay)
@@ -187,9 +266,9 @@ BG = None
 def frame(tt):
     img = BG.copy().convert('RGBA')
     d = ImageDraw.Draw(img)
-    title(img, ease(tt / 0.3))
     if tt < T_BRAND:
-        pill(img, 540, 82, 'TEST DE ATENCIÓN', outfit(34, 800), (120, 230, 120), (14, 30, 14))
+        wordmark(img)
+    title(img, ease(tt / 0.3))
     pos, moving = positions_at(tt)
     # balls appear one by one
     for k in range(3):
@@ -215,10 +294,10 @@ def frame(tt):
     if T_SHOW <= tt < T_HIDE:
         bottom(img, 'Mira bien cuál es...', ease((tt - T_SHOW) / 0.3))
     elif T_HIDE <= tt < swaps[0][0] + 1.2:
-        bottom(img, '¡No lo pierdas de vista!', ease((tt - T_HIDE) / 0.25), GOLD)
+        bottom(img, '¡No lo pierdas de vista!', ease((tt - T_HIDE) / 0.25), CG_GOLD)
     elif swaps[0][0] + 1.2 <= tt < T_STOP:
         k = int((tt - swaps[0][0]) * 2) % 2
-        bottom(img, 'Concéntrate...' if tt < (swaps[0][0] + T_STOP) / 2 else '¡Más rápido!', 1.0, WHITE if tt < (swaps[0][0] + T_STOP) / 2 else ORANGE)
+        bottom(img, 'Concéntrate...' if tt < (swaps[0][0] + T_STOP) / 2 else '¡Más rápido!', 1.0, WHITE if tt < (swaps[0][0] + T_STOP) / 2 else CG_ORANGE)
     # the question
     if T_ASK <= tt < T_BRAND:
         u = ease((tt - T_ASK) / 0.35)
@@ -226,27 +305,21 @@ def frame(tt):
         for i, (x, y) in enumerate(SPOTS):
             lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
             cx, cy = (x + R + 80, y) if i == 0 else (x, y + R + 70)     # the top one is labelled beside it, off the head
-            ld.ellipse((cx - 46, cy - 46, cx + 46, cy + 46), fill=(255, 255, 255, 240))
-            text_c(ld, (cx, cy + 3), str(i + 1), anton(64), (20, 16, 40))
+            ld.ellipse((cx - 46, cy - 46, cx + 46, cy + 46), fill=CG_GOLD + (245,))
+            text_c(ld, (cx, cy + 4), str(i + 1), bebas(80), (26, 15, 15))
             lay.putalpha(lay.getchannel('A').point(lambda v: int(v * u))); img.alpha_composite(lay)
         lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
-        ld.rounded_rectangle((90, 1700, 990, 1890), radius=40, fill=(10, 8, 26, 230), outline=(150, 110, 255, 255), width=3)
-        text_c(ld, (540, 1758), '¿DÓNDE ESTÁ EL BALÓN?', anton(76), WHITE)
-        text_c(ld, (540, 1840), 'Comenta 1, 2 o 3', outfit(50), GOLD)
+        ld.rounded_rectangle((90, 1700, 990, 1890), radius=26, fill=CG_DARK + (238,), outline=CG_GOLD + (255,), width=4)
+        text_c(ld, (540, 1760), '¿DÓNDE ESTÁ EL BALÓN?', bebas(96), WHITE)
+        text_c(ld, (540, 1846), 'Comenta 1, 2 o 3', outfit(50), CG_GOLD)
         lay.putalpha(lay.getchannel('A').point(lambda v: int(v * u))); img.alpha_composite(lay)
         # countdown bar across the top of the box
         left = max(0, 1 - (tt - T_ASK - 0.4) / (T_END - T_ASK - 0.6))
         d = ImageDraw.Draw(img)
-        d.rounded_rectangle((120, 1682, 120 + 840 * left, 1692), radius=5, fill=ORANGE)
+        d.rounded_rectangle((120, 1682, 120 + 840 * left, 1692), radius=5, fill=CG_ORANGE)
     # end card
     if tt >= T_BRAND:
-        u = ease((tt - T_BRAND) / 0.4)
-        lay = Image.new('RGBA', (W, H), (8, 8, 20, int(215 * u))); ld = ImageDraw.Draw(lay)
-        a = int(255 * u)
-        text_c(ld, (540, 860), 'COGNITIVO GYM', anton(130), ORANGE + (a,))
-        text_c(ld, (540, 990), 'Entrena tu mente como entrenas tu juego', outfit(46, 600), (230, 230, 245, a))
-        text_c(ld, (540, 1110), '¿Lo encontraste? Comenta tu número', outfit(46, 700), GOLD + (a,))
-        img.alpha_composite(lay)
+        endcard(img, ease((tt - T_BRAND) / 0.4), '¿Lo encontraste? Comenta tu número')
     return img.convert('RGB')
 
 if __name__ == '__main__':
