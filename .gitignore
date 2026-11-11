@@ -1,0 +1,6 @@
+__pycache__/
+*.wav
+*.tmp.mp4
+video.mp4
+respuesta-video.mp4
+info*.json
