@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reto de la semana · Cognitivo Gym</title>
+<meta name="description" content="Un reto nuevo de atención y memoria cada semana. ¿Lo puedes resolver?">
+<meta property="og:title" content="Reto de la semana · Cognitivo Gym">
+<meta property="og:description" content="Un reto nuevo de atención y memoria cada semana. ¿Lo puedes resolver?">
+<meta property="og:image" content="https://hooporiapr-oss.github.io/cognitivo-retos/portadas/sigue-el-balon.jpg">
+<meta name="theme-color" content="#0E0C22">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0E0C22;--card:#17143A;--line:#2E2A5E;--text:#F2F0FF;--mute:#A9A3D6;--orange:#FF7A18;--gold:#FFCD3C;--red:#FF4646}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100dvh;background:radial-gradient(900px 600px at 50% 0%,#2A1F6A 0%,var(--bg) 70%) no-repeat,var(--bg);
+  color:var(--text);font-family:Outfit,system-ui,sans-serif;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{width:min(520px,100% - 32px);margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 0 48px}
+header{text-align:center;margin-bottom:18px}
+.brand{font-family:Anton,Impact,sans-serif;font-size:1.05rem;letter-spacing:.12em;color:var(--orange);text-decoration:none}
+h1{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(2rem,9vw,2.6rem);letter-spacing:.02em;margin:6px 0 4px;line-height:1.05}
+.sub{color:var(--mute);margin:0}
+.reto{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:18px 0}
+.kick{display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:4px 12px;border-radius:999px;background:var(--gold);color:#2a1d00}
+.kick.old{background:var(--line);color:var(--mute)}
+.reto h2{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.6rem;letter-spacing:.02em;margin:10px 0 2px;line-height:1.1}
+.reto p{margin:0 0 12px;color:var(--mute)}
+video{display:block;width:100%;aspect-ratio:9/16;max-height:78dvh;background:#000;border-radius:12px;object-fit:contain}
+.como{margin:12px 0 0;padding:12px 14px;border-left:4px solid var(--orange);background:rgba(255,122,24,.08);border-radius:0 10px 10px 0;font-size:.95rem}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.btn{display:block;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.95rem;padding:13px 10px;border-radius:12px;border:none;cursor:pointer}
+.btn.wa{background:#25D366;color:#06210f}
+.btn.copy{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+.resp{margin-top:14px}
+.resp summary{cursor:pointer;font-weight:800;color:var(--red);padding:10px 0;list-style:none}
+.resp summary::-webkit-details-marker{display:none}
+.resp summary::before{content:"▸ ";}
+.resp[open] summary::before{content:"▾ ";}
+.gym{display:block;text-align:center;text-decoration:none;margin:26px 0 0;padding:18px;border-radius:16px;
+  background:linear-gradient(135deg,var(--orange),#FF9B4A);color:#1a0d00}
+.gym b{display:block;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:1.5rem;letter-spacing:.04em}
+.gym span{font-weight:600}
+footer{text-align:center;color:var(--mute);font-size:.85rem;margin-top:22px}
+.vacio{text-align:center;color:var(--mute);padding:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="https://hooporia.mobi">COGNITIVO GYM</a>
+    <h1>RETO DE LA SEMANA</h1>
+    <p class="sub">Atención y memoria, en la cancha. ¿Lo puedes resolver?</p>
+  </header>
+
+  <main id="retos"><div class="vacio">Cargando…</div></main>
+
+  <a class="gym" href="https://hooporia.mobi">
+    <b>ENTRENA TU MENTE</b>
+    <span>Juega los cuatro juegos de Cognitivo Gym →</span>
+  </a>
+  <footer>Un reto nuevo cada semana · Cognitivo Gym</footer>
+</div>
+<script>
+/* ── THE CHALLENGES ──────────────────────────────────────────────────
+   One line per challenge. "publicado" puts it on the page; "respuesta"
+   shows its answer video. The newest published one is the challenge of
+   the week; the rest show below it. To release a challenge or its
+   answer, change false to true here (and nothing else). */
+var RETOS = [
+  { id: 'sigue-el-balon', titulo: '¿Puedes seguir el balón?',
+    como: 'Sigue el balón marcado en rojo mientras cambian de lugar. Al final: ¿en el 1, el 2 o el 3?',
+    publicado: true, respuesta: false },
+  { id: 'fortress-orden', titulo: '¿Puedes recordar el orden?',
+    como: 'Seis blancos se encienden uno a uno. Al final: ¿qué color se encendió de 4to?',
+    publicado: false, respuesta: false },
+  { id: 'recall-donde-3', titulo: '¿Puedes recordar los números?',
+    como: 'Los números del 1 al 5 salen en la cancha y desaparecen. Al final: ¿dónde estaba el 3?',
+    publicado: false, respuesta: false },
+  { id: 'recognition-cambio', titulo: '¿Ves el cambio?',
+    como: 'Mira el patrón dorado. En el eco, un cuadro cambió de lugar: ¿cuál?',
+    publicado: false, respuesta: false }
+];
+
+(function(){
+  var vivos = RETOS.filter(function(r){ return r.publicado }).reverse();     /* newest first */
+  var main = document.getElementById('retos');
+  if (!vivos.length) { main.innerHTML = '<div class="vacio">Pronto: el primer reto.</div>'; return }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c] }) }
+  function enlace(r){ return location.origin + location.pathname + '#' + r.id }
+  main.innerHTML = vivos.map(function(r, k){
+    return '<section class="reto" id="' + r.id + '">' +
+      '<span class="kick' + (k ? ' old' : '') + '">' + (k ? 'Reto anterior' : 'Reto de la semana') + '</span>' +
+      '<h2>' + esc(r.titulo) + '</h2>' +
+      '<video controls playsinline preload="metadata" poster="portadas/' + r.id + '.jpg" src="' + r.id + '.mp4"></video>' +
+      '<div class="como">' + esc(r.como) + '</div>' +
+      '<div class="btns">' +
+        '<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent('🏀 ' + r.titulo + ' ¿Lo puedes resolver?\n' + enlace(r)) + '">WhatsApp</a>' +
+        '<button class="btn copy" type="button" data-u="' + esc(enlace(r)) + '">Copiar enlace</button>' +
+      '</div>' +
+      (r.respuesta ? '<details class="resp"><summary>Ver la respuesta</summary>' +
+        '<video controls playsinline preload="none" poster="portadas/' + r.id + '-respuesta.jpg" src="' + r.id + '-respuesta.mp4"></video></details>' : '') +
+    '</section>';
+  }).join('');
+  main.addEventListener('click', function(e){
+    var b = e.target.closest('.copy'); if (!b) return;
+    var u = b.getAttribute('data-u'), t = b.textContent;
+    function ok(){ b.textContent = '¡Copiado!'; setTimeout(function(){ b.textContent = t }, 1800) }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(u).then(ok, function(){ viejo() }); else viejo();
+    function viejo(){ try { var x = document.createElement('textarea'); x.value = u; document.body.appendChild(x); x.select(); document.execCommand('copy'); x.remove(); ok() } catch(err){} }
+  });
+  /* only one video plays at a time */
+  main.addEventListener('play', function(e){ main.querySelectorAll('video').forEach(function(v){ if (v !== e.target) v.pause() }) }, true);
+  if (location.hash) { var el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView() }
+})();
+</script>
+</body>
+</html>
