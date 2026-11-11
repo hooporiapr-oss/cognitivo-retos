@@ -25,11 +25,20 @@ and following on the court, not a copy of the Cognitivo Gym training games.
 
 **The answer is 21.** Made by `quien.py`.
 
+## Challenge 3 · ¿Quién tiene el balón? Nivel 2
+
+| File | What it is |
+|---|---|
+| `quien-tiene-el-balon-nivel-2.mp4` | The challenge (25 s). The same game with three identical balls: the one to follow starts with #7, a second ball comes in, then a third. Each beat moves one or two balls, never three, so nobody ever holds two. Lights out on the last catch. |
+| `quien-tiene-el-balon-nivel-2-respuesta.mp4` | The answer. Slow motion, the ball to follow in red, the other two faded, ending on "¡ERA EL 11!". |
+
+**The answer is 11.** Made by `nivel2.py`.
+
 ## Rebuilding
 
 ```
 sh build.sh
 ```
 
-Needs Python 3 with Pillow, NumPy and SciPy, and ffmpeg. It rebuilds every video: `sigue.py` and `respuesta.py` (challenge 1), `quien.py` (challenge 2), and `musica.py` (the music, made from scratch, nothing licensed). Fonts: Bebas Neue (the gym's wordmark font), Anton and Outfit, all under the SIL Open Font
+Needs Python 3 with Pillow, NumPy and SciPy, and ffmpeg. It rebuilds every video: `sigue.py` and `respuesta.py` (challenge 1), `quien.py` (challenge 2), `nivel2.py` (challenge 3), and `musica.py` (the music, made from scratch, nothing licensed). Fonts: Bebas Neue (the gym's wordmark font), Anton and Outfit, all under the SIL Open Font
 License (`OFL-*.txt`).
