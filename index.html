@@ -70,6 +70,20 @@ footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;lett
 .mini span{display:block;padding:6px 8px 8px;font-size:.74rem;font-weight:700;line-height:1.2;min-height:2.6em}
 .mini i{position:absolute;top:6px;right:6px;font-style:normal;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:999px;background:var(--grad);color:#1a0f0f}
 .mini.sel{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,215,0,.35)}
+.aviso{margin:22px 0 0;padding:18px 16px;border-radius:18px;background:var(--card);border:1px solid var(--line);text-align:center}
+.aviso b{display:block;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.9rem;letter-spacing:.08em;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.aviso p{margin:2px 0 12px;color:var(--mute)}
+.aviso form{display:flex;gap:8px}
+.aviso form[hidden]{display:none}
+.aviso input{flex:1;min-width:0;font:inherit;font-size:16px;padding:13px 12px;border-radius:12px;border:1.5px solid var(--line);background:#0d0d14;color:var(--text)}
+.aviso input:focus{outline:none;border-color:var(--gold)}
+.aviso button{font:inherit;font-weight:800;padding:13px 16px;border-radius:12px;border:none;background:var(--grad);color:#1a0f0f;cursor:pointer}
+.aviso button:disabled{opacity:.6}
+.aviso .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.aviso small{display:block;margin-top:10px;color:var(--mute);font-size:.74rem;line-height:1.4}
+.aviso .msg{margin-top:10px;font-weight:700}
+.aviso .msg.bien{color:var(--gold)}
+.aviso .msg.mal{color:var(--red)}
 .vacio{text-align:center;color:var(--mute);padding:40px 0}
 </style>
 </head>
@@ -83,6 +97,18 @@ footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;lett
   </header>
 
   <main id="retos"><div class="vacio">Cargando…</div></main>
+
+  <section class="aviso" id="aviso">
+    <b>AVÍSAME CADA LUNES</b>
+    <p>Te mandamos el reto nuevo cada lunes. Nada más.</p>
+    <form id="fAviso" novalidate>
+      <input id="contacto" name="contacto" type="text" inputmode="email" autocomplete="email" placeholder="Tu email o tu número" aria-label="Tu email o tu número de teléfono" required>
+      <input class="hp" id="web" name="web" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button id="bAviso" type="submit">Avísame</button>
+    </form>
+    <div class="msg" id="mAviso" role="status"></div>
+    <small>Solo para avisarte del reto nuevo. Para darte de baja, contesta BAJA a cualquier aviso. Si tienes menos de 13 años, que se apunte un adulto por ti.</small>
+  </section>
 
   <a class="gym" href="https://hooporia.mobi">
     <b>ENTRENA TU MENTE</b>
@@ -216,6 +242,34 @@ var RETOS = [
   /* only one video plays at a time */
   main.addEventListener('play', function(e){ e.target.parentNode.classList.add('on'); main.querySelectorAll('video').forEach(function(v){ if (v !== e.target) v.pause() }) }, true);
   main.addEventListener('pause', function(e){ e.target.parentNode.classList.remove('on') }, true);
+})();
+/* ── "Avísame cada lunes" ──────────────────────────────────────────
+   Sends the email or number to the server, which keeps the list.
+   The page never gets the list back. */
+(function(){
+  var SERVIDOR = 'https://hooporia-server.onrender.com/avisos/apuntar';
+  var f = document.getElementById('fAviso'), inp = document.getElementById('contacto'), bt = document.getElementById('bAviso'), m = document.getElementById('mAviso');
+  function decir(t, bien){ m.textContent = t; m.className = 'msg ' + (bien ? 'bien' : 'mal') }
+  try { if (localStorage.getItem('cg-aviso')) { f.hidden = true; decir('Ya estás apuntado. ¡Nos vemos el lunes!', true) } } catch (e) {}
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var c = inp.value.trim();
+    var esEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c), tel = c.replace(/\D/g, '');
+    if (!esEmail && !(tel.length === 10 || (tel.length === 11 && tel.charAt(0) === '1'))) { decir('Escribe un email o un número de 10 dígitos.', false); inp.focus(); return }
+    bt.disabled = true; decir('', true);
+    fetch(SERVIDOR, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contacto: c, reto: (location.hash || '').slice(1) || null, web: document.getElementById('web').value }) })
+      .then(function(r){ return r.json().catch(function(){ return { ok: false } }) })
+      .then(function(j){
+        bt.disabled = false;
+        if (j && j.ok) {
+          try { localStorage.setItem('cg-aviso', '1') } catch (e) {}
+          f.hidden = true; decir(j.estado === 'ya' ? 'Ya estabas apuntado. ¡Nos vemos el lunes!' : '¡Listo! Te avisamos el lunes.', true);
+        } else if (j && j.error === 'mal') decir('Escribe un email o un número de 10 dígitos.', false);
+        else if (j && j.error === 'too_many') decir('Demasiados intentos. Prueba en un rato.', false);
+        else decir('No se pudo guardar. Intenta otra vez.', false);
+      }, function(){ bt.disabled = false; decir('No se pudo conectar. Intenta otra vez.', false) });
+  });
 })();
 </script>
 </body>
