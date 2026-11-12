@@ -143,7 +143,8 @@ def frame_reto(tt):
         G.endcard(img, G.ease((tt - T_BRAND) / 0.4), '¿Lo viste? Comenta el número')
     return img.convert('RGB')
 
-# ── the answer: slow motion, the ball to follow in red with a trail ──
+# ── the answer: slow motion, every ball shown as it comes in; the ball to
+#    follow stays red with a trail, drawn on top the whole way ──
 SLOW = 0.7
 T0 = 1.4
 G0 = MOVES[0][0][0]
@@ -163,7 +164,7 @@ def frame_resp(tt):
     if tt < T_REVEAL_R:
         for b in range(1, NB):
             x, y, sc, v = lugar(b, g)
-            if v: G.paste_c(img, G.BALL, x, y, 0.4, Q.BR * sc)
+            if v: Q.pelota(img, x, y, sc)                      # the others at full strength, as they come in
         if tt >= T0:
             for i in range(12, 0, -1):
                 x, y, _, _ = lugar(0, max(G0, g - i * 0.03)); r = 22 - i * 1.4
@@ -171,6 +172,9 @@ def frame_resp(tt):
                 ImageDraw.Draw(tl).ellipse((x - r, y - r, x + r, y + r), fill=(255, 70, 70, int(140 * (1 - i / 13))))
                 img.alpha_composite(tl)
         x, y, sc, _ = lugar(0, g); Q.pelota(img, x, y, sc, hot=True)
+        rr = (62 * Q.BR + 14) * sc + 5 * math.sin(tt * 7)              # a red ring that never leaves it
+        ring = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ImageDraw.Draw(ring).ellipse((x - rr, y - rr, x + rr, y + rr), outline=(255, 70, 70, 255), width=8)
+        img.alpha_composite(ring.filter(ImageFilter.GaussianBlur(5))); img.alpha_composite(ring)
     if tt < T0:
         G.bottom(img, 'Empieza con el 7', G.ease((tt - 0.2) / 0.3))
     elif tt < T_STOP_R + 0.05:

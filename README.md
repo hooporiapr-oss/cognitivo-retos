@@ -21,7 +21,7 @@ and following on the court, not a copy of the Cognitivo Gym training games.
 | File | What it is |
 |---|---|
 | `cinco-balones.mp4` | The challenge (19 s). The ball to follow starts with #7; on every one of its passes an identical ball flies in from the sideline, until all five players hold one ("1 BALÓN" … "5 BALONES"). Then "¡A MEZCLAR!": players swap balls in pairs, two swaps at a time, 12 rounds, faster and faster. Lights out: who has the ball that started with #7? |
-| `cinco-balones-respuesta.mp4` | The answer (22 s). Slow motion, the ball to follow in red with a trail, the other four faded, ending on "¡ERA EL 14!". |
+| `cinco-balones-respuesta.mp4` | The answer (22 s). Slow motion, every ball shown as it comes in, the ball to follow kept red with a red ring and a trail the whole way, ending on "¡ERA EL 14!". |
 
 **The answer is 14.** Made by `cinco.py`. Released before the two-ball and three-ball versions below.
 
