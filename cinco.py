@@ -26,7 +26,7 @@ def desde(i):
 #   crosses a third player.
 ARMADO = [0.78, 0.72, 0.66, 0.60]                         # 4 build-up passes -> 5 balls
 MEZCLA = [0.56, 0.52, 0.48, 0.45, 0.42, 0.40, 0.37, 0.35, 0.33, 0.31, 0.30, 0.29]
-SEED = 4
+SEED = int(os.environ.get('CINCO_SEED', '4'))          # a team version uses its own, so its answer differs
 
 def plan(seed):
     rnd = random.Random(seed)
@@ -136,7 +136,7 @@ def frame_reto(tt):
         G.bottom(img, '¡Se fue la luz!', G.ease((tt - T_STOP) / 0.15), G.CG_GOLD, 66)
     if T_ASK <= tt < T_BRAND:
         u = G.ease((tt - T_ASK) / 0.35)
-        Q.caja(img, u, '¿QUIÉN TIENE EL BALÓN?', 'El que empezó con el 7 · Comenta el número', G.CG_GOLD)
+        Q.caja(img, u, '¿QUIÉN TIENE EL BALÓN?', 'Empezó con el ' + NUMS[0] + ' · Comenta el número', G.CG_GOLD)
         left = max(0, 1 - (tt - T_ASK - 0.4) / (T_BRAND - T_ASK - 0.6))
         ImageDraw.Draw(img).rounded_rectangle((120, 1682, 120 + 840 * left, 1692), radius=5, fill=G.CG_ORANGE)
     if tt >= T_BRAND:
@@ -176,7 +176,7 @@ def frame_resp(tt):
         ring = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ImageDraw.Draw(ring).ellipse((x - rr, y - rr, x + rr, y + rr), outline=(255, 70, 70, 255), width=8)
         img.alpha_composite(ring.filter(ImageFilter.GaussianBlur(5))); img.alpha_composite(ring)
     if tt < T0:
-        G.bottom(img, 'Empieza con el 7', G.ease((tt - 0.2) / 0.3))
+        G.bottom(img, 'Empieza con el ' + NUMS[0], G.ease((tt - 0.2) / 0.3))
     elif tt < T_STOP_R + 0.05:
         G.bottom(img, 'Sigue el rojo', 1.0, G.CG_GOLD)
     elif tt < T_REVEAL_R:

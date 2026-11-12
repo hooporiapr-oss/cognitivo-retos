@@ -83,7 +83,8 @@ def arc(p, q, u, side):
     return (x, y)
 
 # ── static background: a perfect Cognitivo Gym court, seen from above ──
-def background():
+def background(piso='COGNITIVO GYM'):
+    """piso: the words painted on the floor (a team version puts its own name)"""
     yy = np.linspace(0, 1, H)[:, None]; xx = np.linspace(-1, 1, W)[None, :]
     g = np.zeros((H, W, 3), np.float32) + np.array(CG_DARK, np.float32)
     # glossy dark hardwood: boards along the length, with staggered joints
@@ -139,7 +140,7 @@ def background():
     img.alpha_composite(hb.filter(ImageFilter.GaussianBlur(8))); img.alpha_composite(hb)
     # centre-court logo
     # COGNITIVO GYM painted on the floor, between the centre circle and the arc
-    cg = Image.new('RGBA', (W, H), (0, 0, 0, 0)); cd = ImageDraw.Draw(cg); f = bebas(110); t = 'COGNITIVO GYM'
+    cg = Image.new('RGBA', (W, H), (0, 0, 0, 0)); cd = ImageDraw.Draw(cg); f = bebas(110); t = piso
     ws = [cd.textlength(c, font=f) for c in t]; sp = 14; x = 540 - (sum(ws) + sp * (len(t) - 1)) / 2
     for c, w in zip(t, ws): cd.text((x, (MID_Y + 1.8 * PX + HOOP[1] - r3) / 2), c, font=f, fill=(255, 225, 150, 52), anchor='lm'); x += w + sp
     img.alpha_composite(cg)

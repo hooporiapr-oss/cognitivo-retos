@@ -172,7 +172,7 @@ def frame_reto(tt):
         G.bottom(img, '¡Se fue la luz!', G.ease((tt - T_STOP) / 0.15), G.CG_GOLD, 66)
     if T_ASK <= tt < T_BRAND:
         u = G.ease((tt - T_ASK) / 0.35)
-        caja(img, u, '¿QUIÉN TIENE EL BALÓN?', 'El que empezó con el 7 · Comenta el número', G.CG_GOLD)
+        caja(img, u, '¿QUIÉN TIENE EL BALÓN?', 'Empezó con el 7 · Comenta el número', G.CG_GOLD)
         left = max(0, 1 - (tt - T_ASK - 0.4) / (T_BRAND - T_ASK - 0.6))
         ImageDraw.Draw(img).rounded_rectangle((120, 1682, 120 + 840 * left, 1692), radius=5, fill=G.CG_ORANGE)
     if tt >= T_BRAND:
