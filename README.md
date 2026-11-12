@@ -20,8 +20,8 @@ and following on the court, not a copy of the Cognitivo Gym training games.
 
 | File | What it is |
 |---|---|
-| `quien-tiene-el-balon.mp4` | The challenge (23 s). Five players (7, 3, 11, 14, 21) on the same court. The ball to follow starts with #7 and is passed alone four times; then an identical second ball comes in from the sideline and both are passed at once, faster and faster. The lights go out on the last catch: who has the ball that started with #7? Comment the number. |
-| `quien-tiene-el-balon-respuesta.mp4` | The answer (29 s). The passes in slow motion, the ball to follow in red with a trail and a pass count, the other ball faded, ending on "¡ERA EL 21!". |
+| `quien-tiene-el-balon.mp4` | The challenge (19 s). Five players (7, 3, 11, 14, 21) on the same court. The ball to follow starts with #7 and is passed alone four times; then an identical second ball comes in from the sideline and both are passed at once, faster and faster. The lights go out on the last catch: who has the ball that started with #7? Comment the number. |
+| `quien-tiene-el-balon-respuesta.mp4` | The answer (22 s). The passes in slow motion, the ball to follow in red with a trail and a pass count, the other ball faded, ending on "¡ERA EL 21!". |
 
 **The answer is 21.** Made by `quien.py`.
 

@@ -27,8 +27,8 @@ OK = {(i, j) for i in range(5) for j in range(5) if i != j and
 # Two identical balls. The one to follow starts with #7 and is passed alone
 # four times; then a second ball comes in from the sideline and from there
 # both are passed at once, sometimes crossing in the air.
-SOLO = [0.82, 0.76, 0.70, 0.64]
-DOBLE = [0.66, 0.62, 0.58, 0.55, 0.52, 0.49, 0.46, 0.44, 0.42, 0.40, 0.38, 0.36, 0.35, 0.34]
+SOLO = [0.60, 0.56, 0.52, 0.48]          # sped up Nov 12: the first cut felt slow
+DOBLE = [0.52, 0.49, 0.46, 0.44, 0.42, 0.40, 0.38, 0.36, 0.35, 0.34, 0.32, 0.31, 0.30, 0.29]
 ENTRA = 2                                        # the second ball comes in to #11
 random.seed(14)
 def plan():
@@ -52,16 +52,16 @@ def plan():
     return pas, a, b
 PASES, FINAL, FINAL_B = plan()
 
-T_SHOW, T_HIDE = 0.5, 2.7
+T_SHOW, T_HIDE = 0.4, 2.0
 T_IN = None
-t, PASS_T = 3.1, []
+t, PASS_T = 2.3, []
 for k, (d, ma, mb) in enumerate(PASES):
     if k == len(SOLO):                           # the second ball's entrance
-        T_IN = (t, t + 0.7); t += 0.85
-    PASS_T.append((t, t + d)); t += d + max(0.07, 0.17 - 0.007 * k)
+        T_IN = (t, t + 0.55); t += 0.65
+    PASS_T.append((t, t + d)); t += d + max(0.06, 0.13 - 0.005 * k)
 T_STOP = PASS_T[-1][1]                           # the last catch: lights out
 T_ASK = T_STOP + 0.55
-T_BRAND = T_ASK + 4.6
+T_BRAND = T_ASK + 4.2
 DUR = T_BRAND + 2.4
 ENTRA_DESDE = (1160, 1135 - 60)                   # off the right sideline, at #11's height
 
@@ -172,8 +172,8 @@ def frame_reto(tt):
     return img.convert('RGB')
 
 # ── the answer: the same passes in slow motion, with a trail and a count ──
-SLOW = 0.62
-T0 = 1.8
+SLOW = 0.75
+T0 = 1.4
 G0 = PASS_T[0][0]
 def g_of(tt): return G0 - 0.01 if tt < T0 else G0 + (tt - T0) * SLOW
 T_STOP_R = T0 + (T_STOP - G0) / SLOW
