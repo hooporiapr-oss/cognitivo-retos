@@ -16,7 +16,16 @@ and following on the court, not a copy of the Cognitivo Gym training games.
 
 **The answer is 2** (the left hand). The moves are fixed, so it is the same every time the videos are built.
 
-## Challenge 2 · ¿Quién tiene el balón?
+## Challenge 2 · ¿Quién tiene el balón? 5 balones
+
+| File | What it is |
+|---|---|
+| `cinco-balones.mp4` | The challenge (19 s). The ball to follow starts with #7; on every one of its passes an identical ball flies in from the sideline, until all five players hold one ("1 BALÓN" … "5 BALONES"). Then "¡A MEZCLAR!": players swap balls in pairs, two swaps at a time, 12 rounds, faster and faster. Lights out: who has the ball that started with #7? |
+| `cinco-balones-respuesta.mp4` | The answer (22 s). Slow motion, the ball to follow in red with a trail, the other four faded, ending on "¡ERA EL 14!". |
+
+**The answer is 14.** Made by `cinco.py`. Released before the two-ball and three-ball versions below.
+
+## Challenge 2b · ¿Quién tiene el balón?
 
 | File | What it is |
 |---|---|
@@ -40,5 +49,5 @@ and following on the court, not a copy of the Cognitivo Gym training games.
 sh build.sh
 ```
 
-Needs Python 3 with Pillow, NumPy and SciPy, and ffmpeg. It rebuilds every video: `sigue.py` and `respuesta.py` (challenge 1), `quien.py` (challenge 2), `nivel2.py` (challenge 3), and `musica.py` (the music, made from scratch, nothing licensed). Fonts: Bebas Neue (the gym's wordmark font), Anton and Outfit, all under the SIL Open Font
+Needs Python 3 with Pillow, NumPy and SciPy, and ffmpeg. It rebuilds every video: `sigue.py` and `respuesta.py` (challenge 1), `cinco.py` (5 balones), `quien.py` (challenge 2), `nivel2.py` (challenge 3), and `musica.py` (the music, made from scratch, nothing licensed). Fonts: Bebas Neue (the gym's wordmark font), Anton and Outfit, all under the SIL Open Font
 License (`OFL-*.txt`).
