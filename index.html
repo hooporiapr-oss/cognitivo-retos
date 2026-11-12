@@ -84,9 +84,9 @@ footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;lett
 .aviso .msg{margin-top:10px;font-weight:700}
 .aviso .msg.bien{color:var(--gold)}
 .aviso .msg.mal{color:var(--red)}
-.sigue{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;color:var(--mute);text-decoration:none;font-weight:700;font-size:.92rem}
-.sigue svg{width:26px;height:18px;flex:none}
-.sigue span b{color:var(--text)}
+.sigue{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 16px;margin:18px auto 0;color:var(--mute);font-weight:700;font-size:.92rem}
+.sigue a{display:flex;align-items:center;gap:7px;color:var(--text);text-decoration:none;padding:6px 2px}
+.sigue svg{width:24px;height:18px;flex:none}
 .vacio{text-align:center;color:var(--mute);padding:40px 0}
 </style>
 </head>
@@ -113,10 +113,14 @@ footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;lett
     <small>Solo para avisarte del reto nuevo. Para darte de baja, contesta BAJA a cualquier aviso. Si tienes menos de 13 años, que se apunte un adulto por ti.</small>
   </section>
 
-  <a class="sigue" href="https://www.youtube.com/@CognoGym" target="_blank" rel="noopener">
-    <svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5v9l8-4.5z" fill="#fff"/></svg>
-    <span>Síguenos en YouTube · <b>@CognoGym</b></span>
-  </a>
+  <div class="sigue">
+    <span>Síguenos:</span>
+    <a class="yt" href="https://www.youtube.com/@CognoGym" target="_blank" rel="noopener">
+      <svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0000"/><path d="M11 5.5v9l8-4.5z" fill="#fff"/></svg>YouTube</a>
+    <a class="tt" href="https://www.tiktok.com/@cognogym" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#fff"/><path d="M13.5 5v9.2a2.7 2.7 0 1 1-2.2-2.65V9.3a5 5 0 1 0 4.4 4.9V9.6a5.6 5.6 0 0 0 3 .9V8.3a3.4 3.4 0 0 1-3-3.3z" fill="#0a0a0f"/></svg>TikTok</a>
+    <span>@cognogym</span>
+  </div>
 
   <a class="gym" href="https://hooporia.mobi">
     <b>ENTRENA TU MENTE</b>
