@@ -136,7 +136,7 @@ def frame_reto(tt):
     if tt >= T_STOP: apagon(img, G.ease((tt - T_STOP) / 0.08))
     if tt < T_BRAND: G.wordmark(img)
     G.title(img, G.ease(tt / 0.3), '¿QUIÉN TIENE', 'EL ', 'BALÓN?')
-    jugadores(img, tt, dim=tt >= T_STOP)
+    jugadores(img, tt, dim=T_STOP <= tt < T_ASK)          # dark only for the lights-out moment; bright again for the question, so every number reads
     if tt < T_STOP:
         x, y, sc, v = balon(tt, 'B')
         if v: pelota(img, x, y, sc)

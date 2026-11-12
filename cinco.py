@@ -108,7 +108,7 @@ def frame_reto(tt):
     if tt >= T_STOP: Q.apagon(img, G.ease((tt - T_STOP) / 0.08))
     if tt < T_BRAND: G.wordmark(img)
     G.title(img, G.ease(tt / 0.3), '¿QUIÉN TIENE', 'EL ', 'BALÓN?')
-    jugadores(img, 0.1, tt, dim=tt >= T_STOP)
+    jugadores(img, 0.1, tt, dim=T_STOP <= tt < T_ASK)     # dark only for the lights-out moment; bright again for the question
     if tt < T_STOP:
         for b in range(1, NB):
             x, y, sc, v = lugar(b, tt)
