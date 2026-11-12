@@ -194,6 +194,39 @@ def endcard(img, u, line):
     text_c(ld, (540, 1380), line, outfit(46, 700), (235, 235, 240, al))
     img.alpha_composite(lay)
 
+def endcard_brillante(img, u, line):
+    """A brighter closing card (Nov 2026), used by the ¿Quién tiene el balón?
+    videos: the court stays visible behind a lighter veil, a warm gold
+    spotlight sits behind the wordmark, and the wordmark and button glow."""
+    img.alpha_composite(Image.new('RGBA', (W, H), CG_DARK + (int(178 * u),)))
+    yy = np.linspace(0, 1, H)[:, None]; xx = np.linspace(-1, 1, W)[None, :]
+    luz = np.exp(-(xx ** 2 * 1.4 + ((yy - 0.48) * 3.0) ** 2))
+    glow = np.zeros((H, W, 4), np.float32)
+    glow[..., :3] = np.array([255, 120, 40], np.float32) * (1 - luz[..., None] * 0.35) + np.array([255, 200, 120], np.float32) * luz[..., None] * 0.35   # warm orange, lighter at the centre
+    glow[..., 3] = luz * 105 * u
+    img.alpha_composite(Image.fromarray(glow.astype(np.uint8), 'RGBA'))
+    # the wordmark, with a soft halo behind it
+    halo = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    grad_text(halo, (540, 770), 'COGNITIVO', bebas(190), u, spacing=16); grad_text(halo, (540, 930), 'GYM', bebas(190), u, spacing=16)
+    img.alpha_composite(halo.filter(ImageFilter.GaussianBlur(22))); img.alpha_composite(halo)
+    lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay); al = int(255 * u)
+    t = 'CADA PUNTO CUENTA'; f = outfit(38, 800); ws = [ld.textlength(c, font=f) for c in t]; sp = 11; x = 540 - (sum(ws) + sp * (len(t) - 1)) / 2
+    for c, w in zip(t, ws): ld.text((x, 1048), c, font=f, fill=(255, 255, 255, al), anchor='lm'); x += w + sp
+    img.alpha_composite(lay)
+    # the button, glowing
+    m = Image.new('L', (W, H), 0); ImageDraw.Draw(m).rounded_rectangle((150, 1140, 930, 1280), radius=26, fill=al)
+    u2 = np.clip((np.arange(W) - 150) / 780, 0, 1)[None, :, None]
+    col = np.array(CG_GOLD, np.float32) * (1 - u2) + np.array(CG_ORANGE, np.float32) * u2
+    fill = Image.fromarray(np.repeat(col, H, 0).astype(np.uint8))
+    btn = Image.merge('RGBA', (*fill.split(), m))
+    img.alpha_composite(btn.filter(ImageFilter.GaussianBlur(24))); img.alpha_composite(btn)
+    lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(lay)
+    text_c(ld, (540, 1213), 'COGNOGYM.COM', bebas(84), (26, 15, 15, al))
+    tw = ld.textlength(line, font=outfit(46, 700))
+    ld.rounded_rectangle((540 - tw / 2 - 36, 1334, 540 + tw / 2 + 36, 1426), radius=46, fill=CG_DARK + (int(200 * u),))
+    text_c(ld, (540, 1380), line, outfit(46, 700), (255, 255, 255, al))
+    img.alpha_composite(lay)
+
 # ── ball sprites ──
 def ball_sprite(r, hot=False):
     pad = 70; s = 2 * (r + pad)

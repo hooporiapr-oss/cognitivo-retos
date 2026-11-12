@@ -168,7 +168,7 @@ def frame_reto(tt):
         left = max(0, 1 - (tt - T_ASK - 0.4) / (T_BRAND - T_ASK - 0.6))
         ImageDraw.Draw(img).rounded_rectangle((120, 1682, 120 + 840 * left, 1692), radius=5, fill=G.CG_ORANGE)
     if tt >= T_BRAND:
-        G.endcard(img, G.ease((tt - T_BRAND) / 0.4), '¿Lo viste? Comenta el número')
+        G.endcard_brillante(img, G.ease((tt - T_BRAND) / 0.4), '¿Lo viste? Comenta el número')
     return img.convert('RGB')
 
 # ── the answer: the same passes in slow motion, with a trail and a count ──
@@ -215,7 +215,7 @@ def frame_resp(tt):
         G.text_c(ld, (540, 1850), '¿Acertaste? Cuéntanos', G.outfit(48), G.CG_GOLD)
         lay.putalpha(lay.getchannel('A').point(lambda v: int(v * u))); img.alpha_composite(lay)
     if tt >= T_BRAND_R:
-        G.endcard(img, G.ease((tt - T_BRAND_R) / 0.4), 'Un reto nuevo cada semana')
+        G.endcard_brillante(img, G.ease((tt - T_BRAND_R) / 0.4), 'Un reto nuevo cada semana')
     return img.convert('RGB')
 
 def render(fn, dur, out):

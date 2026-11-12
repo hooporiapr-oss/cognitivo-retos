@@ -70,6 +70,7 @@ def endcard(img, u, line):
     img.alpha_composite(lay)
 
 G.wordmark, G.title, G.endcard = wordmark, title, endcard
+G.endcard_brillante = endcard          # cinco.py calls the bright card; the club keeps its own
 
 def cancha():
     """the club's court: the same court, its wood turned navy, its name on the floor"""
