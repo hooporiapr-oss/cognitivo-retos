@@ -137,7 +137,9 @@ def frame_reto(tt):
     # the lights flicker on the last passes, then go out on the last catch
     flick = any(abs(tt - (PASS_T[k][0] + 0.12)) < 0.05 for k in (-3, -2))
     if flick: apagon(img, 0.55)
-    if tt >= T_STOP: apagon(img, G.ease((tt - T_STOP) / 0.08))
+    if tt >= T_STOP:      # lights out, then the lights come most of the way back for the question
+        luz = 1 - 0.75 * G.ease((tt - T_ASK) / 0.4) if tt >= T_ASK else 1.0
+        apagon(img, G.ease((tt - T_STOP) / 0.08) * luz)
     if tt < T_BRAND: G.wordmark(img)
     G.title(img, G.ease(tt / 0.3), '¿QUIÉN TIENE', 'EL ', 'BALÓN?')
     jugadores(img, tt, dim=T_STOP <= tt < T_ASK)          # dark only for the lights-out moment; bright again for the question, so every number reads
