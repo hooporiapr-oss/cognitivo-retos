@@ -43,6 +43,12 @@ and following on the court, not a copy of the Cognitivo Gym training games.
 
 **The answer is 11.** Made by `nivel2.py`.
 
+## Team pages
+
+### Canóvanas Basketball · cognogym.com/canovanas
+
+The 5 balones game in the club's identity: navy and gold, their logo, "CANÓVANAS" on the floor, jersey numbers 4, 5, 10, 12, 15 (numbers only, never names), its own shuffle. **The answer is 5.** Made by `canovanas.py` (it reuses `cinco.py` with the team's settings). The page is `canovanas/index.html`: not linked from the main page and marked noindex. Its answer opens when `respuesta` in that file is set to true or to a date.
+
 ## Rebuilding
 
 ```

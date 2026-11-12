@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Reto Canóvanas Basketball · Cognitivo Gym</title>
+<meta name="description" content="El reto de Canóvanas Basketball: ¿quién tiene el balón? Comenta el número.">
+<meta property="og:title" content="Reto Canóvanas Basketball">
+<meta property="og:description" content="¿Quién tiene el balón? 5 balones. Comenta el número.">
+<meta property="og:image" content="https://cognogym.com/canovanas/portada.jpg">
+<!-- A team's page: shared on purpose, not something for search engines to list. -->
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0c0a22">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* Canóvanas Basketball's colours, read off their logo: navy and gold. */
+@font-face{font-family:'Bebas Neue';src:url(../BebasNeue.woff) format('woff');font-display:swap}
+:root{--bg:#0c0a22;--card:#17143a;--line:#2e2a5c;--text:#fff;--mute:#a9a6c9;--navy:#2e265c;--gold:#ECB45C;--red:#FF4646;--grad:linear-gradient(135deg,#ECB45C,#FFD68C)}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100dvh;background:radial-gradient(900px 600px at 50% 0%,#2a2368 0%,var(--bg) 70%) no-repeat,var(--bg);
+  color:var(--text);font-family:Outfit,system-ui,sans-serif;line-height:1.45;-webkit-text-size-adjust:100%}
+.wrap{width:min(520px,100% - 32px);margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 0 48px}
+header{text-align:center}
+.logo{display:block;margin:0 auto;width:min(300px,78%);background:#fff;border-radius:18px;padding:12px 16px;border:3px solid var(--gold)}
+.logo img{display:block;width:100%;height:auto}
+h1{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:clamp(2.3rem,11vw,3rem);letter-spacing:.03em;margin:16px 0 2px;line-height:1}
+h1 b{font-weight:400;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--mute);margin:0}
+.reto{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:18px 0}
+.vid{position:relative}
+video{display:block;width:100%;aspect-ratio:9/16;max-height:78dvh;background:#000;border-radius:12px;object-fit:contain}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.vid .play span{width:84px;height:84px;border-radius:50%;background:var(--grad);box-shadow:0 6px 24px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.vid .play span::after{content:"";margin-left:8px;border-style:solid;border-width:18px 0 18px 30px;border-color:transparent transparent transparent var(--navy)}
+.vid.on .play{display:none}
+.como{margin:12px 0 0;padding:12px 14px;border-left:4px solid var(--gold);background:rgba(236,180,92,.08);border-radius:0 10px 10px 0;font-size:.95rem}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.btn{display:block;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.95rem;padding:13px 10px;border-radius:12px;border:none;cursor:pointer}
+.btn.share{grid-column:1/-1;background:var(--grad);color:var(--navy);font-size:1.05rem;padding:15px 10px}
+.btn.wa{background:#25D366;color:#06210f}
+.btn.copy{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+.candado{margin-top:14px;padding:16px;border-radius:14px;border:1.5px dashed var(--line);text-align:center;background:rgba(236,180,92,.05)}
+.candado b{display:block;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.7rem;letter-spacing:.06em;color:var(--gold)}
+.candado .cuando{display:block;font-weight:800;margin-top:2px}
+.candado .faltan{display:block;color:var(--mute);font-size:.9rem;margin-top:4px}
+.resp{margin-top:14px}
+.resp summary{cursor:pointer;font-weight:800;color:var(--gold);padding:10px 0;list-style:none}
+.resp summary::-webkit-details-marker{display:none}
+.resp summary::before{content:"▸ "}
+.resp[open] summary::before{content:"▾ "}
+footer{text-align:center;color:var(--mute);font-size:.85rem;margin-top:22px}
+footer a{color:var(--gold);font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><img src="logo.png" alt="Canóvanas Basketball"></div>
+    <h1>EL RETO DE <b>CANÓVANAS</b></h1>
+    <p class="sub">¿Quién tiene el balón? 5 balones</p>
+  </header>
+
+  <main id="reto"></main>
+
+  <footer>Hecho por <a href="https://cognogym.com">Cognitivo Gym · cognogym.com</a></footer>
+</div>
+<script>
+/* ── THE TEAM'S CHALLENGE ─────────────────────────────────────────────
+   "respuesta": true shows the answer video, false hides it, or a date and
+   time in Puerto Rico ('2026-11-20T19:00:00-04:00') locks it with a
+   countdown until then, and it opens by itself at that minute. */
+var RETO = {
+  titulo: '¿Quién tiene el balón? 5 balones',
+  como: 'Sigue el balón que empieza con el 4. Cada pase entra otro balón igual, hasta cinco. Luego, ¡a mezclar! Se va la luz: ¿quién lo tiene?',
+  comenta: 'Comenta el número',
+  respuesta: false
+};
+
+(function(){
+  var main = document.getElementById('reto');
+  var ENLACE = location.origin + location.pathname;
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c] }) }
+  function cuando(){ return typeof RETO.respuesta === 'string' ? Date.parse(RETO.respuesta) || 0 : 0 }
+  function abierta(){ return RETO.respuesta === true || (cuando() > 0 && Date.now() >= cuando()) }
+  function pr(t, o){ try { return new Date(t).toLocaleString('es', Object.assign({ timeZone: 'America/Puerto_Rico' }, o)) } catch (e) { return '' } }
+  function hora(t){ return pr(t, { hour: 'numeric', minute: '2-digit', hour12: true }).replace(/\s?a\.?\s?m\.?/i, ' a.m.').replace(/\s?p\.?\s?m\.?/i, ' p.m.') }
+  function fecha(t){ var d = pr(t, { weekday: 'long', day: 'numeric', month: 'long' }); return d.charAt(0).toUpperCase() + d.slice(1) + ' · ' + hora(t) }
+  function mensaje(){
+    var m = '🏀 El reto de Canóvanas Basketball: ' + RETO.titulo + '. ' + RETO.comenta + '.';
+    if (abierta()) m += ' La respuesta ya salió.';
+    else if (cuando()) m += ' La respuesta sale el ' + pr(cuando(), { weekday: 'long', day: 'numeric' }).replace(',', '') + ' a las ' + hora(cuando()) + '.';
+    return m;
+  }
+  function vid(n, poster, pre){ return '<div class="vid"><video playsinline preload="' + pre + '" poster="' + poster + '" src="' + n + '"></video><button class="play" type="button" aria-label="Play"><span></span></button></div>' }
+  function pintar(){
+    main.innerHTML = '<section class="reto">' + vid('reto.mp4', 'portada.jpg', 'metadata') +
+      '<div class="como">' + esc(RETO.como) + '</div>' +
+      '<div class="btns"><button class="btn share" type="button">Compartir</button>' +
+      '<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(mensaje() + '\n' + ENLACE) + '">WhatsApp</a>' +
+      '<button class="btn copy" type="button">Copiar enlace</button></div>' +
+      (abierta() ? '<details class="resp"><summary>Ver la respuesta</summary>' + vid('respuesta.mp4', 'portada-respuesta.jpg', 'none') + '</details>'
+        : cuando() ? '<div class="candado"><b>🔒 La respuesta sale</b><span class="cuando">' + fecha(cuando()) + '</span><span class="faltan" data-t="' + cuando() + '"></span></div>'
+        : '<div class="candado"><b>🔒 La respuesta sale pronto</b></div>') +
+      '</section>';
+    reloj();
+  }
+  function reloj(){
+    var f = main.querySelector('.faltan'); if (!f) return;
+    var ms = +f.getAttribute('data-t') - Date.now();
+    if (ms <= 0) { pintar(); return }
+    var m = Math.ceil(ms / 60000), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60;
+    f.textContent = 'Faltan ' + (d ? d + ' d ' : '') + (d || h ? h + ' h ' : '') + mi + ' min';
+  }
+  setInterval(reloj, 15000);
+  function copiar(b, u){
+    var t = b.textContent;
+    function ok(){ b.textContent = '¡Copiado!'; setTimeout(function(){ b.textContent = t }, 1800) }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(u).then(ok, viejo); else viejo();
+    function viejo(){ try { var x = document.createElement('textarea'); x.value = u; document.body.appendChild(x); x.select(); document.execCommand('copy'); x.remove(); ok() } catch (e) {} }
+  }
+  main.addEventListener('click', function(e){
+    var w = e.target.closest('.vid');
+    if (w) { var v = w.querySelector('video'); if (v.paused) { if (v.ended) v.currentTime = 0; v.play() } else v.pause(); return }
+    var sh = e.target.closest('.share');
+    if (sh) { if (navigator.share) { navigator.share({ title: 'Reto Canóvanas Basketball', text: mensaje(), url: ENLACE }).catch(function(){}); return } copiar(sh, mensaje() + '\n' + ENLACE); return }
+    var c = e.target.closest('.copy'); if (c) copiar(c, ENLACE);
+  });
+  main.addEventListener('play', function(e){ e.target.parentNode.classList.add('on'); main.querySelectorAll('video').forEach(function(v){ if (v !== e.target) v.pause() }) }, true);
+  main.addEventListener('pause', function(e){ e.target.parentNode.classList.remove('on') }, true);
+  pintar();
+})();
+</script>
+</body>
+</html>
