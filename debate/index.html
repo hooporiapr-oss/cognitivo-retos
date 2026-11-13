@@ -66,6 +66,7 @@ body.domingo .card.hoy{border-color:var(--orange);box-shadow:0 0 0 1px rgba(255,
 .btn.copy{background:transparent;color:var(--text);border:1.5px solid var(--line)}
 .manana{text-align:center;margin-top:14px;padding:14px;border-radius:14px;border:1.5px dashed var(--line)}
 .manana b{display:block}
+.manana .avisa{display:block;margin-top:10px;font-weight:800;font-size:.9rem;color:#25D366;text-decoration:none}
 .manana .cuenta{font-family:'Bebas Neue',Impact,sans-serif;font-size:1.9rem;letter-spacing:.05em;color:var(--gold)}
 .racha{text-align:center;margin-top:10px;font-weight:800;color:var(--orange)}
 .racha small{display:block;color:var(--mute);font-weight:600;font-size:.74rem;margin-top:2px}
@@ -82,6 +83,9 @@ h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.6rem;l
 .vacio{text-align:center;color:var(--mute);padding:26px 6px}
 .vacio button{margin-top:10px}
 .priv{color:var(--mute);font-size:.76rem;text-align:center;margin-top:18px;line-height:1.5}
+.wac-btn{display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;font-weight:800;margin:10px 0 0;padding:14px;border-radius:14px;background:#25D366;color:#06210f}
+.wac-btn svg{width:26px;height:26px;flex:none}
+.wac-btn svg circle{fill:#06210f}.wac-btn svg path{fill:#25D366}
 footer{text-align:center;margin-top:16px;font-size:.85rem;color:var(--mute)}
 footer a{color:var(--gold);font-weight:700;text-decoration:none}
 .gal{display:block;text-align:center;text-decoration:none;font-weight:800;margin:6px 0 0;padding:14px;border-radius:14px;border:1.5px solid var(--line);color:var(--text);background:var(--card)}
@@ -109,6 +113,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
   <main id="app"><div class="vacio" id="cargando"></div></main>
   <p class="priv" id="priv"></p>
   <a class="gal" href="/debate/galeria/" id="gal"></a>
+  <a class="wac-btn" href="https://whatsapp.com/channel/0029VbEYUYK60eBhaEs3oR0n" target="_blank" rel="noopener" id="wac"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#25D366"/><path d="M12 5.2a6.8 6.8 0 0 0-5.9 10.2l-.9 3.3 3.4-.9A6.8 6.8 0 1 0 12 5.2zm3.9 9.6c-.2.5-1 .9-1.4 1-.4 0-.8.2-2.7-.6-2.3-.9-3.7-3.3-3.8-3.4-.1-.2-.9-1.2-.9-2.3s.6-1.6.8-1.8c.2-.2.4-.3.6-.3h.4c.1 0 .3 0 .5.4l.7 1.6c.1.1.1.3 0 .4l-.3.5-.4.4c-.1.1-.3.3-.1.5.1.3.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.7-.8c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.4.3.1.1.1.6-.1 1.1z" fill="#fff"/></svg><span id="wacT"></span></a>
   <footer><a href="https://cognogym.com" id="pie"></a></footer>
 </div>
 <div class="full" id="full" role="dialog" aria-modal="true"><img alt=""><div class="acc"><a id="bajar" download>⬇</a><button type="button" id="cerrar">✕</button></div></div>
@@ -116,6 +121,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
 (function(){
   var API = 'https://hooporia-server.onrender.com/debate';
   var ENLACE = 'https://cognogym.com/debate/';
+  var CANAL = 'https://whatsapp.com/channel/0029VbEYUYK60eBhaEs3oR0n';
   var T = {
     es: { titulo: 'EL DEBATE <b>DEL DÍA</b>', cargando: 'Cargando el debate…', domingo: 'EL GRAN DEBATE DEL DOMINGO',
       cat: { prefieres: '¿Qué prefieres?', harias: '¿Qué tú harías?', debate: 'El gran debate', antes: 'Baloncesto de antes vs. ahora', razon: '¿Quién tiene la razón?', fanatico: 'Decisión del fanático' },
@@ -129,7 +135,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
       nada: 'Hoy no hay debate. ¡Mañana a las 7:00 a.m. volvemos!', error: 'No se pudo cargar. Revisa tu conexión.', reintentar: 'Intentar otra vez',
       malVoto: 'No se pudo guardar tu voto. Intenta otra vez.', cerrada: 'Este debate ya cerró. ¡Mira el de hoy!', limite: 'Demasiados votos desde esta red hoy.',
       priv: 'Votación anónima: no pedimos nombre, email ni teléfono. Tu teléfono guarda un código al azar para que votes una sola vez, y tu red se convierte en una clave que no se puede revertir para frenar el abuso.',
-      pie: 'Hecho por Cognitivo Gym · cognogym.com', locale: 'es', atras: '← Volver a Cognitivo Gym', gal: '🎨 Ver la galería de arte del debate <span>→</span>',
+      wac: 'SIGUE EL DEBATE EN WHATSAPP', avisa: '📲 Recíbelo cada mañana: sigue el canal de WhatsApp', pie: 'Hecho por Cognitivo Gym · cognogym.com', locale: 'es', atras: '← Volver a Cognitivo Gym', gal: '🎨 Ver la galería de arte del debate <span>→</span>',
       msgVoto: function(q){ return '🏀 ¡Hoy hay debate! ' + q + ' Yo ya voté. ¡Ahora te toca a ti!' }, msgNo: function(q){ return '🏀 ¡Hoy hay debate! ' + q + ' ¿Tú qué dices?' } },
     en: { titulo: 'THE DAILY <b>BUCKET</b>', cargando: 'Loading today\'s debate…', domingo: 'THE SUNDAY BIG DEBATE',
       cat: { prefieres: 'Would you rather?', harias: 'What would you do?', debate: 'The big debate', antes: 'Then vs. now', razon: 'Who\'s right?', fanatico: 'Fan\'s choice' },
@@ -143,7 +149,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
       nada: 'No debate today. We\'re back tomorrow at 7:00 a.m.!', error: 'Couldn\'t load. Check your connection.', reintentar: 'Try again',
       malVoto: 'Your vote couldn\'t be saved. Please try again.', cerrada: 'This debate is closed. Check out today\'s!', limite: 'Too many votes from this network today.',
       priv: 'Anonymous voting: we never ask for your name, email or phone. Your phone keeps a random code so you vote once, and your network becomes a one-way key used only to stop abuse.',
-      pie: 'Made by Cognitivo Gym · cognogym.com', locale: 'en', atras: '← Back to Cognitivo Gym', gal: '🎨 See the debate art gallery <span>→</span>',
+      wac: 'FOLLOW THE DEBATE ON WHATSAPP', avisa: '📲 Get it every morning: follow our WhatsApp channel', pie: 'Made by Cognitivo Gym · cognogym.com', locale: 'en', atras: '← Back to Cognitivo Gym', gal: '🎨 See the debate art gallery <span>→</span>',
       msgVoto: function(q){ return '🏀 Today\'s basketball debate is live! ' + q + ' I already voted. Your turn!' }, msgNo: function(q){ return '🏀 Today\'s basketball debate is live! ' + q + ' What do you say?' } }
   };
   function guardar(k, v){ try { localStorage.setItem(k, v) } catch (e) {} }
@@ -186,6 +192,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
     document.getElementById('titulo').innerHTML = t().titulo;
     document.getElementById('priv').textContent = t().priv;
     document.getElementById('pie').textContent = t().pie;
+    document.getElementById('wacT').textContent = t().wac;
     document.getElementById('gal').innerHTML = t().gal;
     document.getElementById('atras').textContent = t().atras;
     var q = S.hoy;
@@ -210,7 +217,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
         '<p class="msg" id="msg"></p>' +
         '<div class="btns"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(mensaje() + '\n' + ENLACE) + '">' + t().wa + '</a>' +
         '<button class="btn share" type="button">' + t().share + '</button><button class="btn copy" type="button">' + t().copy + '</button></div>' +
-        (votado ? '<div class="manana"><b>' + t().manana + '</b>' + t().abre + '<div class="cuenta" id="cuenta"></div></div>' : '');
+        (votado ? '<div class="manana"><b>' + t().manana + '</b>' + t().abre + '<div class="cuenta" id="cuenta"></div><a class="avisa" id="avisa" href="' + CANAL + '" target="_blank" rel="noopener">' + t().avisa + '</a></div>' : '');
       if (votado) { var r = racha(); if (r.cur) h += '<div class="racha">' + t().racha(r.cur) + '<small>' + t().mejor(r.best) + ' · ' + t().rachaNota + '</small></div>' }
       h += '</section>';
     } else {
