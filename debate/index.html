@@ -23,6 +23,8 @@ html{background:var(--bg)}
 body{margin:0;min-height:100dvh;background:radial-gradient(900px 600px at 50% 0%,#2a1d08 0%,var(--bg) 70%) no-repeat,var(--bg);color:var(--text);font-family:Outfit,system-ui,sans-serif;line-height:1.45;-webkit-text-size-adjust:100%}
 body.domingo{background:radial-gradient(900px 640px at 50% 0%,#3a1606 0%,var(--bg) 72%) no-repeat,var(--bg)}
 .wrap{width:min(520px,100% - 32px);margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 0 48px}
+.atras{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:.9rem;text-decoration:none;color:var(--text);padding:8px 14px 8px 10px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);margin-bottom:12px}
+.atras:hover{border-color:var(--gold)}
 .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand{font-family:'Bebas Neue',Impact,sans-serif;font-size:1.25rem;letter-spacing:4px;text-decoration:none;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .lang{display:flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
@@ -82,6 +84,8 @@ h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.6rem;l
 .priv{color:var(--mute);font-size:.76rem;text-align:center;margin-top:18px;line-height:1.5}
 footer{text-align:center;margin-top:16px;font-size:.85rem;color:var(--mute)}
 footer a{color:var(--gold);font-weight:700;text-decoration:none}
+.gal{display:block;text-align:center;text-decoration:none;font-weight:800;margin:6px 0 0;padding:14px;border-radius:14px;border:1.5px solid var(--line);color:var(--text);background:var(--card)}
+.gal span{color:var(--gold)}
 .full{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
 .full.on{display:flex}
 .full img{max-width:100%;max-height:82dvh;border-radius:10px}
@@ -92,6 +96,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
 </head>
 <body>
 <div class="wrap">
+  <a class="atras" href="/" id="atras">← Cognitivo Gym</a>
   <div class="top">
     <a class="brand" href="https://cognogym.com">COGNITIVO GYM</a>
     <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button></div>
@@ -103,6 +108,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
   </header>
   <main id="app"><div class="vacio" id="cargando"></div></main>
   <p class="priv" id="priv"></p>
+  <a class="gal" href="/debate/galeria/" id="gal"></a>
   <footer><a href="https://cognogym.com" id="pie"></a></footer>
 </div>
 <div class="full" id="full" role="dialog" aria-modal="true"><img alt=""><div class="acc"><a id="bajar" download>⬇</a><button type="button" id="cerrar">✕</button></div></div>
@@ -123,7 +129,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
       nada: 'Hoy no hay debate. ¡Mañana a las 7:00 a.m. volvemos!', error: 'No se pudo cargar. Revisa tu conexión.', reintentar: 'Intentar otra vez',
       malVoto: 'No se pudo guardar tu voto. Intenta otra vez.', cerrada: 'Este debate ya cerró. ¡Mira el de hoy!', limite: 'Demasiados votos desde esta red hoy.',
       priv: 'Votación anónima: no pedimos nombre, email ni teléfono. Tu teléfono guarda un código al azar para que votes una sola vez, y tu red se convierte en una clave que no se puede revertir para frenar el abuso.',
-      pie: 'Hecho por Cognitivo Gym · cognogym.com', locale: 'es',
+      pie: 'Hecho por Cognitivo Gym · cognogym.com', locale: 'es', atras: '← Volver a Cognitivo Gym', gal: '🎨 Ver la galería de arte del debate <span>→</span>',
       msgVoto: function(q){ return '🏀 ¡Hoy hay debate! ' + q + ' Yo ya voté. ¡Ahora te toca a ti!' }, msgNo: function(q){ return '🏀 ¡Hoy hay debate! ' + q + ' ¿Tú qué dices?' } },
     en: { titulo: 'THE DAILY <b>BUCKET</b>', cargando: 'Loading today\'s debate…', domingo: 'THE SUNDAY BIG DEBATE',
       cat: { prefieres: 'Would you rather?', harias: 'What would you do?', debate: 'The big debate', antes: 'Then vs. now', razon: 'Who\'s right?', fanatico: 'Fan\'s choice' },
@@ -137,7 +143,7 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
       nada: 'No debate today. We\'re back tomorrow at 7:00 a.m.!', error: 'Couldn\'t load. Check your connection.', reintentar: 'Try again',
       malVoto: 'Your vote couldn\'t be saved. Please try again.', cerrada: 'This debate is closed. Check out today\'s!', limite: 'Too many votes from this network today.',
       priv: 'Anonymous voting: we never ask for your name, email or phone. Your phone keeps a random code so you vote once, and your network becomes a one-way key used only to stop abuse.',
-      pie: 'Made by Cognitivo Gym · cognogym.com', locale: 'en',
+      pie: 'Made by Cognitivo Gym · cognogym.com', locale: 'en', atras: '← Back to Cognitivo Gym', gal: '🎨 See the debate art gallery <span>→</span>',
       msgVoto: function(q){ return '🏀 Today\'s basketball debate is live! ' + q + ' I already voted. Your turn!' }, msgNo: function(q){ return '🏀 Today\'s basketball debate is live! ' + q + ' What do you say?' } }
   };
   function guardar(k, v){ try { localStorage.setItem(k, v) } catch (e) {} }
@@ -180,6 +186,8 @@ footer a{color:var(--gold);font-weight:700;text-decoration:none}
     document.getElementById('titulo').innerHTML = t().titulo;
     document.getElementById('priv').textContent = t().priv;
     document.getElementById('pie').textContent = t().pie;
+    document.getElementById('gal').innerHTML = t().gal;
+    document.getElementById('atras').textContent = t().atras;
     var q = S.hoy;
     document.getElementById('fecha').textContent = S.dia ? fechaLarga(S.dia) : '';
     var dom = !!(q && q.domingo); document.body.classList.toggle('domingo', dom);

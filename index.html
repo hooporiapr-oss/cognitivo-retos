@@ -89,6 +89,8 @@ footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;lett
 .sigue svg{width:24px;height:18px;flex:none}
 .deb{display:flex;align-items:center;gap:12px;margin:22px 0 0;padding:16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,107,53,.14));border:1.5px solid var(--orange);color:var(--text);text-decoration:none}
 .deb[hidden]{display:none}
+.galink{display:block;text-align:center;margin:10px 0 0;font-weight:800;font-size:.95rem;color:var(--gold);text-decoration:none}
+.galink[hidden]{display:none}
 .deb .ic{font-size:2rem;line-height:1}
 .deb b{display:block;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.7rem;letter-spacing:.06em;line-height:1}
 .deb span{display:block;color:var(--mute);font-size:.88rem;font-weight:600;margin-top:2px}
@@ -113,7 +115,8 @@ footer small{display:block;margin-top:10px;font-size:.66rem;font-weight:800;lett
     <span><b>EL DEBATE DEL DÍA</b><span>Una pregunta cada día. Vota en un toque.</span></span>
     <i>→</i>
   </a>
-  <script>if (Date.now() >= Date.parse('2026-11-13T07:00:00-04:00')) document.getElementById('deb').hidden = false</script>
+  <a class="galink" id="galink" href="/debate/galeria/" hidden>🎨 Galería de arte del debate →</a>
+  <script>if (Date.now() >= Date.parse('2026-11-13T07:00:00-04:00')) { document.getElementById('deb').hidden = false; document.getElementById('galink').hidden = false }</script>
 
   <section class="aviso" id="aviso">
     <b>AVÍSAME CADA LUNES</b>
