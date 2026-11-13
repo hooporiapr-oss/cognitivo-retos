@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>El Debate del Día · Cognitivo Gym</title>
+<meta name="description" content="Una pregunta de baloncesto cada día. Vota en un toque y mira cómo votó la comunidad.">
+<meta property="og:title" content="🏀 El Debate del Día">
+<meta property="og:description" content="Una pregunta de baloncesto cada día. ¿Tú qué dices? Vota en un toque.">
+<meta property="og:image" content="https://cognogym.com/debate/og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:url" content="https://cognogym.com/debate/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Bebas Neue';src:url(../BebasNeue.woff) format('woff');font-display:swap}
+:root{--bg:#0a0a0f;--card:#14141c;--line:#2a2a36;--text:#fff;--mute:#8892a0;--orange:#FF6B35;--gold:#FFD700;--grad:linear-gradient(135deg,var(--gold),var(--orange))}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100dvh;background:radial-gradient(900px 600px at 50% 0%,#2a1d08 0%,var(--bg) 70%) no-repeat,var(--bg);color:var(--text);font-family:Outfit,system-ui,sans-serif;line-height:1.45;-webkit-text-size-adjust:100%}
+body.domingo{background:radial-gradient(900px 640px at 50% 0%,#3a1606 0%,var(--bg) 72%) no-repeat,var(--bg)}
+.wrap{width:min(520px,100% - 32px);margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 0 48px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-family:'Bebas Neue',Impact,sans-serif;font-size:1.25rem;letter-spacing:4px;text-decoration:none;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lang{display:flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{font:inherit;font-weight:800;font-size:.78rem;padding:6px 12px;border:0;background:transparent;color:var(--mute);cursor:pointer}
+.lang button.on{background:var(--grad);color:#1a0f0f}
+header{text-align:center;margin:16px 0 10px}
+h1{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:clamp(2.6rem,12vw,3.3rem);letter-spacing:.03em;margin:0;line-height:1}
+h1 b{font-weight:400;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.fecha{color:var(--mute);font-weight:600;margin:4px 0 0}
+.fecha::first-letter{text-transform:uppercase}
+.sunday{display:inline-block;margin-top:8px;font-size:.72rem;font-weight:800;letter-spacing:.14em;padding:4px 12px;border-radius:999px;background:var(--grad);color:#1a0f0f}
+.sunday[hidden]{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0}
+body.domingo .card.hoy{border-color:var(--orange);box-shadow:0 0 0 1px rgba(255,107,53,.3),0 10px 40px rgba(255,107,53,.12)}
+.arte{margin:-4px -4px 14px;position:relative}
+.arte img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:12px;max-height:46dvh;cursor:zoom-in}
+.arte span{position:absolute;left:10px;top:10px;font-size:.66rem;font-weight:800;letter-spacing:.16em;padding:4px 10px;border-radius:999px;background:rgba(10,10,15,.75);color:var(--gold)}
+.cat{font-size:.72rem;font-weight:800;letter-spacing:.14em;color:var(--orange);text-transform:uppercase}
+.preg{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:clamp(1.9rem,8.4vw,2.35rem);letter-spacing:.02em;line-height:1.08;margin:6px 0 14px}
+.ops{display:grid;gap:10px}
+.op{position:relative;display:block;width:100%;text-align:left;font:inherit;font-weight:800;font-size:1.05rem;color:var(--text);background:#1c1c27;border:2px solid var(--line);border-radius:14px;padding:16px 16px;cursor:pointer;overflow:hidden;min-height:58px;transition:border-color .2s,transform .1s}
+.op:active{transform:scale(.99)}
+.op:disabled{cursor:default}
+.op .barra{position:absolute;inset:0 auto 0 0;width:0;background:rgba(255,215,0,.16);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.op.mia .barra{background:linear-gradient(90deg,rgba(255,215,0,.42),rgba(255,107,53,.42))}
+.op.mia{border-color:var(--gold)}
+.op .t{position:relative;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.op .pct{font-family:'Bebas Neue',Impact,sans-serif;font-size:1.5rem;letter-spacing:.02em;opacity:0;transition:opacity .4s}
+.votado .op .pct{opacity:1}
+.op .lider{font-size:.66rem;font-weight:800;letter-spacing:.1em;color:var(--orange);margin-left:6px}
+.tot{color:var(--mute);font-size:.9rem;margin:12px 0 0;text-align:center}
+.msg{margin:10px 0 0;text-align:center;font-weight:700}
+.msg.mal{color:#ff6b6b}
+.invite{color:var(--mute);text-align:center;margin:12px 0 0;font-size:.9rem}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.btn{display:block;text-align:center;text-decoration:none;font:inherit;font-weight:800;font-size:.95rem;padding:13px 10px;border-radius:12px;border:none;cursor:pointer}
+.btn.wa{grid-column:1/-1;background:#25D366;color:#06210f;font-size:1.05rem;padding:15px 10px}
+.btn.share{background:var(--grad);color:#1a0f0f}
+.btn.copy{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+.manana{text-align:center;margin-top:14px;padding:14px;border-radius:14px;border:1.5px dashed var(--line)}
+.manana b{display:block}
+.manana .cuenta{font-family:'Bebas Neue',Impact,sans-serif;font-size:1.9rem;letter-spacing:.05em;color:var(--gold)}
+.racha{text-align:center;margin-top:10px;font-weight:800;color:var(--orange)}
+.racha small{display:block;color:var(--mute);font-weight:600;font-size:.74rem;margin-top:2px}
+h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:1.6rem;letter-spacing:.05em;margin:0 0 8px;color:var(--mute)}
+.res .q{font-weight:800;margin:0 0 8px}
+.res .row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;font-size:.92rem;margin:6px 0}
+.res .row i{grid-column:1/-1;display:block;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.res .row i b{display:block;height:100%;background:var(--grad)}
+.res .row.win{font-weight:800;color:var(--gold)}
+.res .meta{color:var(--mute);font-size:.82rem;margin-top:6px}
+.arch .res{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.arch .res:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.mas{display:block;width:100%;margin-top:12px;font:inherit;font-weight:800;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
+.vacio{text-align:center;color:var(--mute);padding:26px 6px}
+.vacio button{margin-top:10px}
+.priv{color:var(--mute);font-size:.76rem;text-align:center;margin-top:18px;line-height:1.5}
+footer{text-align:center;margin-top:16px;font-size:.85rem;color:var(--mute)}
+footer a{color:var(--gold);font-weight:700;text-decoration:none}
+.full{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.full.on{display:flex}
+.full img{max-width:100%;max-height:82dvh;border-radius:10px}
+.full .acc{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 18px);left:0;right:0;display:flex;gap:10px;justify-content:center}
+.full .acc a,.full .acc button{font:inherit;font-weight:800;padding:11px 18px;border-radius:999px;border:0;background:var(--grad);color:#1a0f0f;text-decoration:none;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.op .barra{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="https://cognogym.com">COGNITIVO GYM</a>
+    <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button></div>
+  </div>
+  <header>
+    <h1 id="titulo"></h1>
+    <p class="fecha" id="fecha"></p>
+    <span class="sunday" id="sunday" hidden></span>
+  </header>
+  <main id="app"><div class="vacio" id="cargando"></div></main>
+  <p class="priv" id="priv"></p>
+  <footer><a href="https://cognogym.com" id="pie"></a></footer>
+</div>
+<div class="full" id="full" role="dialog" aria-modal="true"><img alt=""><div class="acc"><a id="bajar" download>⬇</a><button type="button" id="cerrar">✕</button></div></div>
+<script>
+(function(){
+  var API = 'https://hooporia-server.onrender.com/debate';
+  var ENLACE = 'https://cognogym.com/debate/';
+  var T = {
+    es: { titulo: 'EL DEBATE <b>DEL DÍA</b>', cargando: 'Cargando el debate…', domingo: 'EL GRAN DEBATE DEL DOMINGO',
+      cat: { prefieres: '¿Qué prefieres?', harias: '¿Qué tú harías?', debate: 'El gran debate', antes: 'Baloncesto de antes vs. ahora', razon: '¿Quién tiene la razón?', fanatico: 'Decisión del fanático' },
+      arte: 'ARTE DEL DÍA', invita: 'Toca tu respuesta. Un toque y listo.', votos: function(n){ return n === 1 ? '1 voto' : n.toLocaleString('es') + ' votos' },
+      primero: '¡Sé el primero en votar!', tuyo: 'Tu voto', lider: 'VA GANANDO', empate: 'Empate',
+      wa: 'COMPÁRTELO POR WHATSAPP', share: 'Compartir', copy: 'Copiar enlace', copiado: '¡Copiado!',
+      manana: '🏀 ¡Mañana tenemos otro debate! ¿Estás listo?', abre: 'El próximo abre en',
+      racha: function(n){ return '🔥 ¡Llevas ' + n + (n === 1 ? ' día' : ' días') + ' participando!' }, mejor: function(n){ return 'Tu mejor racha: ' + n + (n === 1 ? ' día' : ' días') },
+      rachaNota: 'La racha se guarda en este teléfono: se pierde si borras los datos o cambias de equipo.',
+      ayer: 'ASÍ VOTÓ LA COMUNIDAD AYER', archivo: 'DEBATES ANTERIORES', mas: 'Ver más debates', fin: 'Esos son todos.',
+      nada: 'Hoy no hay debate. ¡Mañana a las 7:00 a.m. volvemos!', error: 'No se pudo cargar. Revisa tu conexión.', reintentar: 'Intentar otra vez',
+      malVoto: 'No se pudo guardar tu voto. Intenta otra vez.', cerrada: 'Este debate ya cerró. ¡Mira el de hoy!', limite: 'Demasiados votos desde esta red hoy.',
+      priv: 'Votación anónima: no pedimos nombre, email ni teléfono. Tu teléfono guarda un código al azar para que votes una sola vez, y tu red se convierte en una clave que no se puede revertir para frenar el abuso.',
+      pie: 'Hecho por Cognitivo Gym · cognogym.com', locale: 'es',
+      msgVoto: function(q){ return '🏀 ¡Hoy hay debate! ' + q + ' Yo ya voté. ¡Ahora te toca a ti!' }, msgNo: function(q){ return '🏀 ¡Hoy hay debate! ' + q + ' ¿Tú qué dices?' } },
+    en: { titulo: 'THE DAILY <b>BUCKET</b>', cargando: 'Loading today\'s debate…', domingo: 'THE SUNDAY BIG DEBATE',
+      cat: { prefieres: 'Would you rather?', harias: 'What would you do?', debate: 'The big debate', antes: 'Then vs. now', razon: 'Who\'s right?', fanatico: 'Fan\'s choice' },
+      arte: 'ART OF THE DAY', invita: 'Tap your answer. One tap and you\'re done.', votos: function(n){ return n === 1 ? '1 vote' : n.toLocaleString('en') + ' votes' },
+      primero: 'Be the first to vote!', tuyo: 'Your vote', lider: 'LEADING', empate: 'Tied',
+      wa: 'SHARE ON WHATSAPP', share: 'Share', copy: 'Copy link', copiado: 'Copied!',
+      manana: '🏀 A new debate drops tomorrow! Are you ready?', abre: 'The next one opens in',
+      racha: function(n){ return '🔥 You\'ve participated ' + n + (n === 1 ? ' day' : ' days in a row') + '!' }, mejor: function(n){ return 'Your best streak: ' + n + (n === 1 ? ' day' : ' days') },
+      rachaNota: 'Your streak lives on this phone: it is lost if you clear your data or switch devices.',
+      ayer: 'HOW THE COMMUNITY VOTED YESTERDAY', archivo: 'PAST DEBATES', mas: 'See more debates', fin: 'That\'s all of them.',
+      nada: 'No debate today. We\'re back tomorrow at 7:00 a.m.!', error: 'Couldn\'t load. Check your connection.', reintentar: 'Try again',
+      malVoto: 'Your vote couldn\'t be saved. Please try again.', cerrada: 'This debate is closed. Check out today\'s!', limite: 'Too many votes from this network today.',
+      priv: 'Anonymous voting: we never ask for your name, email or phone. Your phone keeps a random code so you vote once, and your network becomes a one-way key used only to stop abuse.',
+      pie: 'Made by Cognitivo Gym · cognogym.com', locale: 'en',
+      msgVoto: function(q){ return '🏀 Today\'s basketball debate is live! ' + q + ' I already voted. Your turn!' }, msgNo: function(q){ return '🏀 Today\'s basketball debate is live! ' + q + ' What do you say?' } }
+  };
+  function guardar(k, v){ try { localStorage.setItem(k, v) } catch (e) {} }
+  function leer(k){ try { return localStorage.getItem(k) } catch (e) { return null } }
+  var lang = leer('cg-lang') === 'en' ? 'en' : 'es';
+  var V = leer('cg-v');
+  if (!V || !/^[a-z0-9-]{8,64}$/.test(V)) { V = (crypto.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2))).toLowerCase(); guardar('cg-v', V) }
+  var S = { hoy: null, ayer: null, mio: null, dia: null, proximo: null, archivo: [], archivoFin: false, cargado: false, error: false };
+  var app = document.getElementById('app');
+  function t(){ return T[lang] }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c] }) }
+  function txt(o){ return (o && (o[lang] || o.es)) || '' }
+  function pct(n, tot){ return tot ? Math.round(n * 100 / tot) : 0 }
+  function fechaLarga(f){ try { var d = new Date(f + 'T12:00:00-04:00'); return d.toLocaleDateString(t().locale, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Puerto_Rico' }) } catch (e) { return f } }
+
+  /* streaks: the debate days this phone voted, kept on the phone only */
+  function racha(){
+    var dias = []; try { dias = JSON.parse(leer('cg-racha') || '[]') } catch (e) {}
+    var set = {}; dias.forEach(function(d){ set[d] = 1 });
+    function ant(d){ var x = new Date(d + 'T12:00:00Z'); x.setUTCDate(x.getUTCDate() - 1); return x.toISOString().slice(0, 10) }
+    var cur = 0, d = S.dia; if (!set[d]) d = ant(d);
+    while (set[d]) { cur++; d = ant(d) }
+    var best = Math.max(+(leer('cg-racha-mejor') || 0), cur); guardar('cg-racha-mejor', String(best));
+    return { cur: cur, best: best };
+  }
+  function anotarRacha(dia){ var dias = []; try { dias = JSON.parse(leer('cg-racha') || '[]') } catch (e) {} if (dias.indexOf(dia) < 0) { dias.push(dia); dias = dias.slice(-400); guardar('cg-racha', JSON.stringify(dias)) } }
+
+  function resumen(q, titulo){
+    if (!q) return '';
+    var tot = q.total, max = Math.max.apply(null, q.opciones.map(function(o){ return o.votos }));
+    return '<div class="res">' + (titulo ? '<h2>' + titulo + '</h2>' : '') +
+      '<p class="q">' + esc(txt(q)) + '</p>' +
+      q.opciones.map(function(o){ var w = tot && o.votos === max; return '<div class="row' + (w ? ' win' : '') + '"><span>' + (w ? '🏆 ' : '') + esc(txt(o)) + '</span><span>' + pct(o.votos, tot) + '%</span><i><b style="width:' + pct(o.votos, tot) + '%"></b></i></div>' }).join('') +
+      '<div class="meta">' + fechaLarga(q.fecha) + ' · ' + t().votos(tot) + '</div></div>';
+  }
+
+  function pintar(){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('.lang button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-l') === lang) });
+    document.getElementById('titulo').innerHTML = t().titulo;
+    document.getElementById('priv').textContent = t().priv;
+    document.getElementById('pie').textContent = t().pie;
+    var q = S.hoy;
+    document.getElementById('fecha').textContent = S.dia ? fechaLarga(S.dia) : '';
+    var dom = !!(q && q.domingo); document.body.classList.toggle('domingo', dom);
+    var sb = document.getElementById('sunday'); sb.hidden = !dom; sb.textContent = t().domingo;
+    if (!S.cargado) { app.innerHTML = S.error ? '<div class="vacio">' + t().error + '<br><button class="mas" id="otra">' + t().reintentar + '</button></div>' : '<div class="vacio">' + t().cargando + '</div>'; return }
+    var h = '';
+    if (q) {
+      var votado = !!S.mio, tot = q.total, max = Math.max.apply(null, q.opciones.map(function(o){ return o.votos }));
+      var lideres = q.opciones.filter(function(o){ return tot && o.votos === max });
+      h += '<section class="card hoy' + (votado ? ' votado' : '') + '">' +
+        (q.arte ? '<div class="arte"><img src="' + esc(q.arte) + '" alt="" id="arteImg"><span>' + t().arte + '</span></div>' : '') +
+        '<div class="cat">' + esc(t().cat[q.categoria] || '') + '</div>' +
+        '<div class="preg">' + esc(txt(q)) + '</div><div class="ops">' +
+        q.opciones.map(function(o){
+          var p = pct(o.votos, tot), lid = votado && lideres.length === 1 && lideres[0].id === o.id;
+          return '<button class="op' + (S.mio === o.id ? ' mia' : '') + '" type="button" data-o="' + esc(o.id) + '"' + (votado ? ' disabled' : '') + '>' +
+            '<i class="barra" data-w="' + (votado ? p : 0) + '"></i><span class="t"><span>' + esc(txt(o)) + (S.mio === o.id ? ' ✓' : '') + (lid ? '<span class="lider">' + t().lider + '</span>' : '') + '</span><span class="pct">' + p + '%</span></span></button>';
+        }).join('') + '</div>' +
+        (votado ? '<p class="tot">' + t().votos(tot) + (lideres.length > 1 && tot ? ' · ' + t().empate : '') + '</p>' : '<p class="invite">' + (tot ? t().invita : t().primero) + '</p>') +
+        '<p class="msg" id="msg"></p>' +
+        '<div class="btns"><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(mensaje() + '\n' + ENLACE) + '">' + t().wa + '</a>' +
+        '<button class="btn share" type="button">' + t().share + '</button><button class="btn copy" type="button">' + t().copy + '</button></div>' +
+        (votado ? '<div class="manana"><b>' + t().manana + '</b>' + t().abre + '<div class="cuenta" id="cuenta"></div></div>' : '');
+      if (votado) { var r = racha(); if (r.cur) h += '<div class="racha">' + t().racha(r.cur) + '<small>' + t().mejor(r.best) + ' · ' + t().rachaNota + '</small></div>' }
+      h += '</section>';
+    } else {
+      h += '<section class="card"><div class="vacio">' + t().nada + '<div class="manana" style="margin-top:12px">' + t().abre + '<div class="cuenta" id="cuenta"></div></div></div></section>';
+    }
+    if (S.ayer) h += '<section class="card">' + resumen(S.ayer, t().ayer) + '</section>';
+    var viejos = S.archivo.filter(function(a){ return !S.ayer || a.fecha !== S.ayer.fecha });
+    if (viejos.length) h += '<section class="card arch"><h2>' + t().archivo + '</h2>' + viejos.map(function(a){ return resumen(a) }).join('') +
+      (S.archivoFin ? '' : '<button class="mas" id="mas">' + t().mas + '</button>') + '</section>';
+    app.innerHTML = h;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ app.querySelectorAll('.barra').forEach(function(b){ b.style.width = b.getAttribute('data-w') + '%' }) }) });
+    reloj();
+  }
+  function mensaje(){ var q = S.hoy; if (!q) return ''; return (S.mio ? t().msgVoto : t().msgNo)(txt(q)) }
+
+  function reloj(){
+    var c = document.getElementById('cuenta'); if (!c || !S.proximo) return;
+    var ms = Date.parse(S.proximo) - Date.now();
+    if (ms <= 0) { c.textContent = '00:00:00'; cargar(); return }
+    var s = Math.floor(ms / 1000), hh = Math.floor(s / 3600), mm = Math.floor(s % 3600 / 60), ss = s % 60;
+    c.textContent = [hh, mm, ss].map(function(n){ return String(n).padStart(2, '0') }).join(':');
+  }
+  setInterval(reloj, 1000);
+
+  function api(path, body){
+    return fetch(API + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {})
+      .then(function(r){ return r.json() }).then(function(j){ if (!j || !j.ok) throw new Error((j && j.error) || 'error'); return j.data });
+  }
+  function cargar(){
+    return api('/hoy?v=' + encodeURIComponent(V)).then(function(d){
+      var cambio = S.dia && S.dia !== d.dia;
+      S.dia = d.dia; S.proximo = d.proximo; S.hoy = d.hoy; S.ayer = d.ayer; S.mio = d.mio; S.cargado = true; S.error = false;
+      if (S.mio) anotarRacha(S.dia);
+      if (cambio || !S.archivo.length) masArchivo(true); else pintar();
+    }, function(){ if (!S.cargado) { S.error = true; pintar() } });
+  }
+  function masArchivo(reset){
+    var antes = reset || !S.archivo.length ? '' : S.archivo[S.archivo.length - 1].fecha;
+    return api('/archivo' + (antes ? '?antes=' + antes : '')).then(function(l){
+      if (reset) S.archivo = [];
+      S.archivo = S.archivo.concat(l); S.archivoFin = l.length < 10; pintar();
+    }, function(){ pintar() });
+  }
+  function votar(op, btn){
+    var msg = document.getElementById('msg');
+    app.querySelectorAll('.op').forEach(function(b){ b.disabled = true });
+    btn.classList.add('mia');
+    api('/votar', { fecha: S.dia, opcion: op, v: V }).then(function(d){
+      if (d.estado === 'ok' || d.estado === 'ya') { S.mio = d.mio; S.hoy = d.resumen; anotarRacha(S.dia); pintar(); return }
+      if (d.estado === 'cerrada') { msg.className = 'msg mal'; msg.textContent = t().cerrada; cargar(); return }
+      if (d.estado === 'limite') { msg.className = 'msg mal'; msg.textContent = t().limite; return }
+      throw new Error('mal');
+    }).catch(function(){
+      btn.classList.remove('mia'); app.querySelectorAll('.op').forEach(function(b){ b.disabled = false });
+      msg.className = 'msg mal'; msg.textContent = t().malVoto;
+    });
+  }
+  function copiar(b, u){
+    var tx = b.textContent;
+    function ok(){ b.textContent = t().copiado; setTimeout(function(){ b.textContent = tx }, 1800) }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(u).then(ok, viejo); else viejo();
+    function viejo(){ try { var x = document.createElement('textarea'); x.value = u; document.body.appendChild(x); x.select(); document.execCommand('copy'); x.remove(); ok() } catch (e) {} }
+  }
+  app.addEventListener('click', function(e){
+    var o = e.target.closest('.op'); if (o && !o.disabled && !S.mio) { votar(o.getAttribute('data-o'), o); return }
+    if (e.target.closest('#otra')) { S.error = false; pintar(); cargar(); return }
+    if (e.target.closest('#mas')) { masArchivo(false); return }
+    var sh = e.target.closest('.share');
+    if (sh) { if (navigator.share) { navigator.share({ title: t().titulo.replace(/<[^>]+>/g, ''), text: mensaje(), url: ENLACE }).catch(function(){}); return } copiar(sh, mensaje() + '\n' + ENLACE); return }
+    var c = e.target.closest('.copy'); if (c) { copiar(c, ENLACE); return }
+    var img = e.target.closest('#arteImg');
+    if (img) { var f = document.getElementById('full'); f.querySelector('img').src = img.src; document.getElementById('bajar').href = img.src; f.classList.add('on') }
+  });
+  document.getElementById('cerrar').addEventListener('click', function(){ document.getElementById('full').classList.remove('on') });
+  document.getElementById('full').addEventListener('click', function(e){ if (e.target === this) this.classList.remove('on') });
+  document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click', function(){ lang = b.getAttribute('data-l'); guardar('cg-lang', lang); pintar() }) });
+  /* live results while open: refresh the counts every 20 seconds after voting */
+  setInterval(function(){ if (S.mio && !document.hidden) api('/hoy?v=' + encodeURIComponent(V)).then(function(d){ if (d.dia === S.dia && d.hoy) { S.hoy = d.hoy; var tot = app.querySelector('.tot'); pintar() } }, function(){}) }, 20000);
+  pintar(); cargar();
+})();
+</script>
+</body>
+</html>
